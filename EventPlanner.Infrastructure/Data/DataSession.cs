@@ -6,9 +6,10 @@ namespace EventPlanner.Infrastructure.Data;
 
 internal sealed class DataSession(EventPlannerDbContext db) : IDataSession
 {
-    // SQLITE_CONSTRAINT_UNIQUE and SQLITE_CONSTRAINT_PRIMARYKEY extended result codes.
+    // SQLITE_CONSTRAINT_UNIQUE, SQLITE_CONSTRAINT_PRIMARYKEY and SQLITE_CONSTRAINT_FOREIGNKEY extended result codes.
     private const int UniqueConstraintViolation = 2067;
     private const int PrimaryKeyConstraintViolation = 1555;
+    private const int ForeignKeyConstraintViolation = 787;
 
     public IEventProjectStore Events { get; } = new EventProjectStore(db);
 
@@ -32,10 +33,11 @@ internal sealed class DataSession(EventPlannerDbContext db) : IDataSession
         }
         catch (DbUpdateException ex) when (ex.InnerException is SqliteException
         {
-            SqliteExtendedErrorCode: UniqueConstraintViolation or PrimaryKeyConstraintViolation,
+            SqliteExtendedErrorCode: UniqueConstraintViolation or PrimaryKeyConstraintViolation or ForeignKeyConstraintViolation,
         })
         {
-            // A concurrent commit took the same unique key (e.g. a payment operation id).
+            // A concurrent commit took the same unique key (e.g. a payment operation id), or deleted a
+            // record this change refers to (e.g. the project meanwhile deleted): the caller reloads.
             return SaveOutcome.Conflict;
         }
     }

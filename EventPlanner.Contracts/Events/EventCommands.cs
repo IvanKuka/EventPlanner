@@ -30,3 +30,10 @@ public sealed record RenameProgramPart(Guid EventId, long ExpectedRevision, Guid
 
 /// <summary>Removing a part also removes it from every guest's attendance scope.</summary>
 public sealed record RemoveProgramPart(Guid EventId, long ExpectedRevision, Guid PartId);
+
+/// <summary>
+/// Deletes the project permanently with everything it owns (program, guests, groups, vendors, quotes,
+/// decision history, budget and payments). Allowed in every status, archived included.
+/// </summary>
+/// <param name="ConfirmationName">The project name typed by the user; it must match, so a stray click cannot delete.</param>
+public sealed record DeleteEventProject(Guid Id, long ExpectedRevision, string ConfirmationName);

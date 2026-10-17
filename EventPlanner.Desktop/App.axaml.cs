@@ -34,14 +34,16 @@ public sealed partial class App : Application
         {
             var loggerFactory = AppServices.CreateLoggerFactory(_options.DataRoot);
             var logger = loggerFactory.CreateLogger<App>();
-            RegisterGlobalExceptionLogging(logger);
 
             var window = new MainWindow();
-            var shell = new ShellViewModel(_options, loggerFactory, new AvaloniaPlatformServices(window, desktop));
+            var platform = new AvaloniaPlatformServices(window, desktop, loggerFactory.CreateLogger<AvaloniaPlatformServices>());
+            var shell = new ShellViewModel(_options, loggerFactory, platform);
+            RegisterGlobalExceptionHandling(logger, shell);
             window.DataContext = shell;
             desktop.MainWindow = window;
             desktop.Exit += (_, _) =>
             {
+                platform.Dispose();
                 shell.Dispose();
                 loggerFactory.Dispose();
             };
@@ -65,10 +67,19 @@ public sealed partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    private static void RegisterGlobalExceptionLogging(ILogger logger)
+    private static void RegisterGlobalExceptionHandling(ILogger logger, ShellViewModel shell)
     {
-        // Exceptions are logged centrally and never swallowed; the process still fails visibly.
-        Dispatcher.UIThread.UnhandledException += (_, e) => logger.LogCritical(e.Exception, "Unhandled UI exception");
+        // Every unhandled UI exception is logged. Ones the app can survive are shown as a banner and
+        // the page reloads (data writes are transactional); runtime faults still end the process.
+        Dispatcher.UIThread.UnhandledException += (_, e) =>
+        {
+            logger.LogCritical(e.Exception, "Unhandled UI exception");
+            if (UnexpectedErrors.CanContinue(e.Exception))
+            {
+                e.Handled = true;
+                shell.ReportUnexpectedError();
+            }
+        };
         TaskScheduler.UnobservedTaskException += (_, e) => logger.LogError(e.Exception, "Unobserved task exception");
     }
 }

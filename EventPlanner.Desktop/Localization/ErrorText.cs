@@ -32,6 +32,7 @@ public static class ErrorText
         ValidationRules.EndBeforeStart => Strings.Validation_EndBeforeStart,
         ValidationRules.InvalidTransition => Strings.Validation_InvalidTransition,
         ValidationRules.ConfirmationRequired => Strings.Validation_ConfirmationRequired,
+        ValidationRules.ConfirmationMismatch => Strings.Validation_ConfirmationMismatch,
         ValidationRules.UnknownReference => Strings.Validation_UnknownReference,
         ValidationRules.NotInGroup => Strings.Validation_NotInGroup,
         ValidationRules.AmountOutOfRange => Strings.Validation_AmountOutOfRange,

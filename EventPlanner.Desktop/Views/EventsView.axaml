@@ -3,15 +3,32 @@
              xmlns:events="using:EventPlanner.Desktop.ViewModels.Events"
              xmlns:contracts="using:EventPlanner.Contracts.Events"
              xmlns:l="using:EventPlanner.Desktop.Localization"
+             xmlns:views="using:EventPlanner.Desktop.Views"
              x:Class="EventPlanner.Desktop.Views.EventsView"
              x:DataType="events:EventsViewModel">
+
+  <DockPanel>
+  <Border DockPanel.Dock="Top" Classes="ribbon">
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+      <StackPanel Orientation="Horizontal">
+        <StackPanel Classes="ribbon-group">
+          <TextBlock Classes="ribbon-caption" Text="{x:Static l:Strings.Ribbon_Projects}" />
+          <StackPanel Orientation="Horizontal">
+            <Button Classes="command" views:ButtonIcon.Data="{StaticResource Icon.Add}" Content="{x:Static l:Strings.Events_New}" Command="{Binding NewProjectCommand}" />
+            <Button Classes="command" views:ButtonIcon.Data="{StaticResource Icon.Save}" Content="{x:Static l:Strings.Common_Save}" Command="{Binding SaveCommand}"
+                    IsEnabled="{Binding !IsReadOnly}" />
+            <Button Classes="command" views:ButtonIcon.Data="{StaticResource Icon.Delete}" Content="{x:Static l:Strings.Events_Delete}" Command="{Binding RequestDeleteCommand}"
+                    IsEnabled="{Binding IsExisting}" />
+          </StackPanel>
+        </StackPanel>
+      </StackPanel>
+    </ScrollViewer>
+  </Border>
 
   <Grid ColumnDefinitions="260,16,*">
     <!-- Project list -->
     <DockPanel Grid.Column="0">
       <TextBlock DockPanel.Dock="Top" Classes="h1" Text="{x:Static l:Strings.Nav_Projects}" />
-      <Button DockPanel.Dock="Top" Classes="accent" HorizontalAlignment="Stretch" Margin="0,0,0,8"
-              Content="{x:Static l:Strings.Events_New}" Command="{Binding NewProjectCommand}" />
       <TextBlock DockPanel.Dock="Top" Classes="muted" Text="{x:Static l:Strings.Events_Empty}"
                  IsVisible="{Binding !Projects.Count}" />
       <ListBox ItemsSource="{Binding Projects}" SelectedItem="{Binding SelectedProject}"
@@ -41,6 +58,23 @@
         </Border>
         <Border Classes="message info" IsVisible="{Binding InfoMessage, Converter={x:Static ObjectConverters.IsNotNull}}">
           <TextBlock Text="{Binding InfoMessage}" TextWrapping="Wrap" />
+        </Border>
+
+        <!-- Permanent delete: the exact project name must be typed before the button unlocks. -->
+        <Border Classes="message error" IsVisible="{Binding IsConfirmingDelete}">
+          <StackPanel Spacing="6">
+            <TextBlock Text="{x:Static l:Strings.Events_DeleteTitle}" FontWeight="SemiBold" />
+            <TextBlock Text="{x:Static l:Strings.Events_DeleteWarning}" TextWrapping="Wrap" />
+            <TextBlock Classes="label" Text="{x:Static l:Strings.Events_DeleteTypeName}" />
+            <TextBox Text="{Binding DeleteConfirmationText}" PlaceholderText="{Binding Name}"
+                     AutomationProperties.Name="{x:Static l:Strings.Events_DeleteTypeName}" />
+            <TextBlock Classes="field-error" Text="{Binding Errors[ConfirmationName]}" />
+            <StackPanel Classes="buttons" Margin="0,4,0,0">
+              <Button Classes="danger" views:ButtonIcon.Data="{StaticResource Icon.Delete}" Content="{x:Static l:Strings.Events_DeleteConfirm}"
+                      Command="{Binding ConfirmDeleteCommand}" IsEnabled="{Binding CanConfirmDelete}" />
+              <Button Content="{x:Static l:Strings.Common_Cancel}" Command="{Binding CancelDeleteCommand}" />
+            </StackPanel>
+          </StackPanel>
         </Border>
 
         <Border Classes="card">
@@ -91,7 +125,7 @@
             <TextBlock Classes="field-error" Text="{Binding Errors[Currency]}" />
 
             <StackPanel Classes="buttons">
-              <Button Classes="accent" Content="{x:Static l:Strings.Common_Save}" Command="{Binding SaveCommand}" IsEnabled="{Binding !IsBusy}" />
+              <Button views:ButtonIcon.Data="{StaticResource Icon.Save}" Classes="accent" Content="{x:Static l:Strings.Common_Save}" Command="{Binding SaveCommand}" IsEnabled="{Binding !IsBusy}" />
             </StackPanel>
           </StackPanel>
         </Border>
@@ -133,7 +167,7 @@
                     <Button Grid.Column="1" Margin="6,0,0,0" Content="{x:Static l:Strings.Common_Rename}"
                             Command="{Binding $parent[ItemsControl].((events:EventsViewModel)DataContext).RenamePartCommand}"
                             CommandParameter="{Binding}" />
-                    <Button Grid.Column="2" Margin="6,0,0,0" Content="{x:Static l:Strings.Common_Remove}"
+                    <Button views:ButtonIcon.Data="{StaticResource Icon.Delete}" Grid.Column="2" Margin="6,0,0,0" Content="{x:Static l:Strings.Common_Remove}"
                             Command="{Binding $parent[ItemsControl].((events:EventsViewModel)DataContext).RemovePartCommand}"
                             CommandParameter="{Binding}" />
                   </Grid>
@@ -143,7 +177,7 @@
             <Grid ColumnDefinitions="*,Auto" Margin="0,8,0,0">
               <TextBox Grid.Column="0" Text="{Binding NewPartLabel}" PlaceholderText="{x:Static l:Strings.Events_NewPartWatermark}"
                        AutomationProperties.Name="{x:Static l:Strings.Events_NewPartWatermark}" />
-              <Button Grid.Column="1" Margin="6,0,0,0" Content="{x:Static l:Strings.Common_Add}" Command="{Binding AddPartCommand}" />
+              <Button views:ButtonIcon.Data="{StaticResource Icon.Add}" Grid.Column="1" Margin="6,0,0,0" Content="{x:Static l:Strings.Common_Add}" Command="{Binding AddPartCommand}" />
             </Grid>
             <TextBlock Classes="field-error" Text="{Binding Errors[Label]}" />
           </StackPanel>
@@ -151,4 +185,5 @@
       </StackPanel>
     </ScrollViewer>
   </Grid>
+  </DockPanel>
 </UserControl>

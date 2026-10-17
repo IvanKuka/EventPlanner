@@ -13,7 +13,7 @@ Stav: Etapa 1 implementovaná a overená testami (17. 10. 2026); Etapa 2 (Vendor
 
 | Oblasť | Súbor | Poznámka |
 |---|---|---|
-| Projekt | `Core/Services/Events/EventProjectService.cs` | Create/Update/ChangeStatus, Add/Rename/RemoveProgramPart; kontrola revision a read-only archívu |
+| Projekt | `Core/Services/Events/EventProjectService.cs` | Create/Update/ChangeStatus, Add/Rename/RemoveProgramPart, `DeleteAsync` (trvalé, revision + presný názov, aj archivovaný projekt, DB cascade); kontrola revision a read-only archívu |
 | Lifecycle | `Core/Models/Events/EventStatusRules.cs` | povolené prechody; Ready vyžaduje `ChecklistConfirmed` |
 | Šablóny | `Core/Services/Events/EventTemplates.cs` | len predvolené časti programu |
 | Hostia | `Core/Services/Guests/GuestService.cs` | CRUD hostí/skupín, `SetGroupRsvpAsync` (len vymenovaní členovia, all-or-nothing), varovanie duplicitného mena, zákaz cross-event väzieb |
@@ -37,5 +37,7 @@ Stav: Etapa 1 implementovaná a overená testami (17. 10. 2026); Etapa 2 (Vendor
 - Výber ponuky vráti predtým vybranú ponuku kategórie do Received; zmazanie dodávateľa zachová rozpočtovú položku (SET NULL na `SelectedQuoteId`).
 - História rozhodnutí: výber/nahradenie/odmietnutie zapíše čas, cenu (`KnownTotalMinor` null pri neúplnej), menu, dopad na rozpočet a orezaný dôvod (prázdny = null, max 2000); neskoršia úprava ponuky históriu nezmení; opakované odmietnutie nepridá záznam. Popis v histórii je aktuálny názov ponuky. Zmazanie ponuky/dodávateľa zmaže aj jej históriu (cascade).
 - Dodávateľ: zastaraná revízia pri úprave aj mazaní → `Conflict`, novšie dáta ostanú.
+- Zmazanie projektu odstráni všetko, čo projekt vlastní (10 tabuliek), a nič iné; nesprávny názov alebo zastaraná revízia nezmaže nič.
+- Každý zápis kontroluje `SaveOutcome`; porušenie cudzieho kľúča (napr. odkaz na medzitým zmazaný projekt) je `Conflict`, nie výnimka.
 
-Testy: `EventPlanner.Tests/Unit/*` (vrátane `Unit/Budget/BudgetCalculatorTests.cs`, `Unit/Vendors/QuoteComparisonTests.cs`), `EventPlanner.Tests/Integration/Storage/EventProjectServiceTests.cs`, `GuestServiceTests.cs`, `BudgetServiceTests.cs`, `QuoteComparisonServiceTests.cs`, `BudgetPerformanceTests.cs`, `ProfileMigrationTests.cs`.
+Testy: `EventPlanner.Tests/Unit/*` (vrátane `Unit/Budget/BudgetCalculatorTests.cs`, `Unit/Vendors/QuoteComparisonTests.cs`), `EventPlanner.Tests/Integration/Storage/EventProjectServiceTests.cs`, `GuestServiceTests.cs`, `BudgetServiceTests.cs`, `QuoteComparisonServiceTests.cs`, `BudgetPerformanceTests.cs`, `ProfileMigrationTests.cs`, `EventProjectDeleteTests.cs`, `DataSessionTests.cs`.

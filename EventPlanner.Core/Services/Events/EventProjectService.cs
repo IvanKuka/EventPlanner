@@ -59,7 +59,10 @@ public sealed class EventProjectService(IDataSessionFactory sessions, TimeProvid
 
         await using var session = sessions.Open();
         session.Events.Add(project);
-        await session.SaveChangesAsync(cancellationToken);
+        if (await session.SaveChangesAsync(cancellationToken) == SaveOutcome.Conflict)
+        {
+            return OperationError.Conflict(Entity);
+        }
         logger.LogInformation("Event project {EventId} created", project.Id);
         return project.ToDto();
     }
@@ -192,6 +195,39 @@ public sealed class EventProjectService(IDataSessionFactory sessions, TimeProvid
         }
 
         return await CommitAsync(session, project, cancellationToken);
+    }
+
+    /// <summary>
+    /// Permanent delete of the project and all it owns. The typed name must match exactly (after
+    /// trimming), so the command itself, not only the UI, refuses an unconfirmed delete.
+    /// </summary>
+    public async Task<Result<Guid>> DeleteAsync(DeleteEventProject command, CancellationToken cancellationToken)
+    {
+        await using var session = sessions.Open();
+        var project = await session.Events.FindAsync(command.Id, cancellationToken);
+        if (project is null)
+        {
+            return OperationError.NotFound(Entity);
+        }
+
+        if (project.Revision != command.ExpectedRevision)
+        {
+            return OperationError.Conflict(Entity);
+        }
+
+        if (!string.Equals(command.ConfirmationName?.Trim(), project.Name, StringComparison.Ordinal))
+        {
+            return OperationError.Validation(nameof(command.ConfirmationName), ValidationRules.ConfirmationMismatch);
+        }
+
+        session.Events.Remove(project);
+        if (await session.SaveChangesAsync(cancellationToken) == SaveOutcome.Conflict)
+        {
+            return OperationError.Conflict(Entity);
+        }
+
+        logger.LogInformation("Event project {EventId} deleted", project.Id);
+        return project.Id;
     }
 
     private async Task<Result<EventProjectDto>> CommitAsync(IDataSession session, EventProject project, CancellationToken cancellationToken)

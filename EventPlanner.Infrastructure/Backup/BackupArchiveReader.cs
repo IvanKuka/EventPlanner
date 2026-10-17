@@ -35,34 +35,15 @@ internal static class BackupArchiveReader
 
         using (archive)
         {
-            var structureError = ValidateStructure(archive);
-            if (structureError is not null)
+            try
             {
-                return structureError;
+                return await ExtractValidatedAsync(archive, stagingDirectory, cancellationToken);
             }
-
-            var manifestResult = await ReadManifestAsync(archive.GetEntry(BackupManifest.ManifestPath)!, cancellationToken);
-            if (!manifestResult.IsSuccess)
+            catch (InvalidDataException)
             {
-                return manifestResult.Error!;
+                // Damaged compressed data surfaces only while an entry is read.
+                return OperationError.Of(ErrorCode.CorruptData, "Archive content is damaged.");
             }
-
-            var manifest = manifestResult.Value;
-            var dbEntry = manifest.Files.Single(f => f.Path == BackupManifest.DatabasePath);
-            var targetPath = Path.Combine(stagingDirectory, ProfileDatabase.FileName);
-
-            var copied = await CopyBoundedAsync(archive.GetEntry(BackupManifest.DatabasePath)!, targetPath, dbEntry.Size, cancellationToken);
-            if (copied != dbEntry.Size)
-            {
-                return OperationError.Of(ErrorCode.CorruptData, "Database size does not match the manifest.");
-            }
-
-            if (!string.Equals(await ComputeSha256Async(targetPath, cancellationToken), dbEntry.Sha256, StringComparison.OrdinalIgnoreCase))
-            {
-                return OperationError.Of(ErrorCode.CorruptData, "Database hash does not match the manifest.");
-            }
-
-            return new Extracted(manifest, targetPath);
         }
     }
 
@@ -71,6 +52,38 @@ internal static class BackupArchiveReader
         await using var stream = File.OpenRead(path);
         var hash = await SHA256.HashDataAsync(stream, cancellationToken);
         return Convert.ToHexStringLower(hash);
+    }
+
+    private static async Task<Result<Extracted>> ExtractValidatedAsync(ZipArchive archive, string stagingDirectory, CancellationToken cancellationToken)
+    {
+        var structureError = ValidateStructure(archive);
+        if (structureError is not null)
+        {
+            return structureError;
+        }
+
+        var manifestResult = await ReadManifestAsync(archive.GetEntry(BackupManifest.ManifestPath)!, cancellationToken);
+        if (!manifestResult.IsSuccess)
+        {
+            return manifestResult.Error!;
+        }
+
+        var manifest = manifestResult.Value;
+        var dbEntry = manifest.Files.Single(f => f.Path == BackupManifest.DatabasePath);
+        var targetPath = Path.Combine(stagingDirectory, ProfileDatabase.FileName);
+
+        var copied = await CopyBoundedAsync(archive.GetEntry(BackupManifest.DatabasePath)!, targetPath, dbEntry.Size, cancellationToken);
+        if (copied != dbEntry.Size)
+        {
+            return OperationError.Of(ErrorCode.CorruptData, "Database size does not match the manifest.");
+        }
+
+        if (!string.Equals(await ComputeSha256Async(targetPath, cancellationToken), dbEntry.Sha256, StringComparison.OrdinalIgnoreCase))
+        {
+            return OperationError.Of(ErrorCode.CorruptData, "Database hash does not match the manifest.");
+        }
+
+        return new Extracted(manifest, targetPath);
     }
 
     private static OperationError? ValidateStructure(ZipArchive archive)
@@ -102,11 +115,24 @@ internal static class BackupArchiveReader
             return OperationError.Of(ErrorCode.UnsupportedInput, "Manifest is too large.");
         }
 
+        // The declared length comes from the untrusted archive, so the actual read is bounded too:
+        // a manifest that decompresses beyond the limit is rejected before it is parsed.
+        var buffer = new byte[MaxManifestBytes + 1];
+        int length;
+        await using (var stream = await entry.OpenAsync(cancellationToken))
+        {
+            length = await stream.ReadAtLeastAsync(buffer, buffer.Length, throwOnEndOfStream: false, cancellationToken);
+        }
+
+        if (length > MaxManifestBytes)
+        {
+            return OperationError.Of(ErrorCode.UnsupportedInput, "Manifest is too large.");
+        }
+
         BackupManifest? manifest;
         try
         {
-            await using var stream = await entry.OpenAsync(cancellationToken);
-            manifest = await JsonSerializer.DeserializeAsync<BackupManifest>(stream, cancellationToken: cancellationToken);
+            manifest = JsonSerializer.Deserialize<BackupManifest>(buffer.AsSpan(0, length));
         }
         catch (JsonException)
         {

@@ -84,6 +84,13 @@ public sealed class ShellFlowTests
 
         // Group RSVP with an exception: Tomáš is unchecked and keeps his state.
         guests.SelectedGroup = guests.Groups[0];
+
+        // Deleting the group asks first; cancelling keeps the group and its members.
+        guests.RequestDeleteGroupCommand.Execute(null);
+        Assert.True(guests.IsConfirmingGroupDelete);
+        guests.CancelDeleteGroupCommand.Execute(null);
+        Assert.False(guests.IsConfirmingGroupDelete);
+        Assert.Single(guests.Groups);
         Assert.Equal(3, guests.GroupMembers.Count);
         guests.GroupMembers.Single(m => m.Label.StartsWith("Tomáš", StringComparison.Ordinal)).IsSelected = false;
         await guests.ApplyGroupRsvpCommand.ExecuteAsync(null);
@@ -172,6 +179,26 @@ public sealed class ShellFlowTests
         Assert.NotNull(vendors.WarningMessage); // committed amount is incomplete (transport unknown)
         Assert.True(vendors.Quotes.Single(q => q.Quote.Currency == "EUR").IsSelected);
 
+        // Deleting a vendor (with its quotes and history) asks first; cancelling keeps everything.
+        vendors.SelectedVendor = vendors.Vendors.Single(v => v.Name == "Praha dekor");
+        vendors.RequestDeleteVendorCommand.Execute(null);
+        Assert.True(vendors.IsConfirmingVendorDelete);
+        vendors.CancelDeleteCommand.Execute(null);
+        Assert.False(vendors.IsConfirmingVendorDelete);
+        Assert.Equal(2, vendors.Vendors.Count);
+        vendors.SelectedQuote = vendors.Quotes.Single(q => q.Quote.Currency == "EUR");
+        Assert.False(vendors.IsConfirmingVendorDelete);
+
+        // Reloading while the bound combo boxes are shown must keep their choices (a cleared list
+        // makes the ComboBox write null back, which once crashed the next reload).
+        vendors.SelectionPolicy = vendors.PolicyOptions.Single(o => o.Value == BudgetImpactPolicy.UpdateBudgetItem);
+        Dispatcher.UIThread.RunJobs();
+        await vendors.ActivateAsync(CancellationToken.None);
+        await vendors.ActivateAsync(CancellationToken.None);
+        Assert.NotNull(vendors.SelectionBudgetItem);
+        Assert.NotNull(vendors.QuoteVendor);
+        vendors.SelectionPolicy = vendors.PolicyOptions[0];
+
         // The reloaded detail shows the decision with its reason and an incomplete price.
         await vendors.DecisionsLoad;
         Assert.True(vendors.ShowDecisions);
@@ -214,6 +241,121 @@ public sealed class ShellFlowTests
         Capture(window, "07-budget");
 
         window.Close();
+        TryDelete(root);
+    }
+
+    [AvaloniaFact]
+    public async Task Switching_project_in_the_header_reloads_the_open_tab()
+    {
+        var root = TestProfile.NewRoot();
+        var window = new MainWindow { Width = 1280, Height = 800 };
+        using var shell = new ShellViewModel(AppOptions.ForTests(root), NullLoggerFactory.Instance, new FakePlatformServices());
+        window.DataContext = shell;
+        window.Show();
+        Assert.True(await shell.InitializeAsync(CancellationToken.None));
+
+        // Without any project the app opens on the project editor, outside the tabs.
+        var projects = shell.ProjectsPage!;
+        Assert.Same(projects, shell.SelectedPage);
+        Assert.True(shell.IsProjectsOpen);
+        Assert.Null(shell.SelectedTab);
+        Assert.DoesNotContain(projects, shell.TabPages);
+
+        foreach (var name in new[] { "Svadba", "Krstiny" })
+        {
+            shell.NewProjectCommand.Execute(null);
+            projects.Name = name;
+            projects.StartDate = new DateTime(2027, 6, 12);
+            projects.EndDate = new DateTime(2027, 6, 12);
+            projects.TimeZoneId = "Europe/Bratislava";
+            await projects.SaveCommand.ExecuteAsync(null);
+            Assert.Null(projects.ErrorMessage);
+        }
+
+        var guests = shell.Pages.OfType<GuestsViewModel>().Single();
+        shell.SelectedTab = guests;
+        await guests.ActivateAsync(CancellationToken.None);
+        guests.NewGuestCommand.Execute(null);
+        guests.EditName = "Hosť na krstinách";
+        await guests.SaveGuestCommand.ExecuteAsync(null);
+        Assert.Single(guests.Guests);
+        Assert.StartsWith("Krstiny", shell.ProjectTitle, StringComparison.Ordinal);
+
+        // Picking the other project in the switcher (bound to the projects page) reloads the guests tab.
+        projects.SelectedProject = projects.Projects.Single(p => p.Name == "Svadba");
+        await WaitUntilAsync(() => shell.ProjectTitle.StartsWith("Svadba", StringComparison.Ordinal) && guests.Guests.Count == 0);
+        Assert.Same(guests, shell.SelectedTab);
+
+        shell.OpenBackupCommand.Execute(null);
+        Assert.True(shell.IsBackupOpen);
+        Assert.Null(shell.SelectedTab);
+
+        // "New project" from another page must open an empty form, also when used repeatedly; loading
+        // the projects page must not put the active project back into the editor.
+        for (var attempt = 0; attempt < 2; attempt++)
+        {
+            shell.SelectedTab = guests;
+            shell.NewProjectCommand.Execute(null);
+            await SettleAsync();
+            Assert.True(projects.IsNew);
+            Assert.Equal(string.Empty, projects.Name);
+            Assert.Null(projects.SelectedProject);
+        }
+
+        // Picking a project afterwards still loads it into the editor.
+        projects.SelectedProject = projects.Projects.Single(p => p.Name == "Krstiny");
+        await WaitUntilAsync(() => !projects.IsNew && projects.Name == "Krstiny");
+
+        // Deleting needs the typed name; afterwards the remaining project becomes active.
+        projects.RequestDeleteCommand.Execute(null);
+        Assert.False(projects.CanConfirmDelete);
+        projects.DeleteConfirmationText = "Krstiny";
+        Assert.True(projects.CanConfirmDelete);
+        await projects.ConfirmDeleteCommand.ExecuteAsync(null);
+        Assert.Null(projects.ErrorMessage);
+        Assert.Equal(["Svadba"], projects.Projects.Select(p => p.Name));
+        await WaitUntilAsync(() => shell.ProjectName == "Svadba");
+
+        // Deleting the last project leaves no active project and an empty editor.
+        projects.RequestDeleteCommand.Execute(null);
+        projects.DeleteConfirmationText = "Svadba";
+        await projects.ConfirmDeleteCommand.ExecuteAsync(null);
+        Assert.Empty(projects.Projects);
+        Assert.True(projects.IsNew);
+        Assert.Null(shell.ProjectName);
+        Assert.False(shell.ShowProjectBar);
+
+        window.Close();
+        TryDelete(root);
+    }
+
+    [AvaloniaFact]
+    public async Task Second_start_of_an_open_profile_brings_the_running_window_forward_and_exits()
+    {
+        var root = TestProfile.NewRoot();
+        using var holder = ProfileLock.TryAcquire(root.ProfileDirectory(DataRoot.DefaultProfileName));
+        var platform = new FakePlatformServices { RunningInstanceAnswers = true };
+        using var shell = new ShellViewModel(AppOptions.ForTests(root), NullLoggerFactory.Instance, platform);
+
+        Assert.False(await shell.InitializeAsync(CancellationToken.None));
+
+        Assert.Equal(0, platform.ShutdownCode);
+        Assert.False(shell.IsFailed);
+        Assert.Null(platform.ListeningFor);
+        TryDelete(root);
+    }
+
+    [AvaloniaFact]
+    public async Task Opened_profile_listens_for_later_starts()
+    {
+        var root = TestProfile.NewRoot();
+        var platform = new FakePlatformServices();
+        using var shell = new ShellViewModel(AppOptions.ForTests(root), NullLoggerFactory.Instance, platform);
+
+        Assert.True(await shell.InitializeAsync(CancellationToken.None));
+
+        Assert.Equal(root.ProfileDirectory(DataRoot.DefaultProfileName), platform.ListeningFor);
+        shell.Dispose();
         TryDelete(root);
     }
 
@@ -274,6 +416,28 @@ public sealed class ShellFlowTests
         budget.PaymentAmount = amount;
         await budget.RecordPaymentCommand.ExecuteAsync(null);
         Assert.Null(budget.ErrorMessage);
+    }
+
+    /// <summary>Lets background page loads started by the shell finish (for asserting that nothing changes).</summary>
+    private static async Task SettleAsync()
+    {
+        for (var attempt = 0; attempt < 20; attempt++)
+        {
+            Dispatcher.UIThread.RunJobs();
+            await Task.Delay(10);
+        }
+    }
+
+    /// <summary>Page loads started by the shell run in the background; this waits for their effect.</summary>
+    private static async Task WaitUntilAsync(Func<bool> condition)
+    {
+        for (var attempt = 0; attempt < 200 && !condition(); attempt++)
+        {
+            Dispatcher.UIThread.RunJobs();
+            await Task.Delay(10);
+        }
+
+        Assert.True(condition(), "The expected state was not reached in time.");
     }
 
     private static void TryDelete(DataRoot root)

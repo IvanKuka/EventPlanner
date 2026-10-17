@@ -78,6 +78,27 @@ public sealed class ProfileBackupServiceTests
         Assert.Single(Directory.GetDirectories(profile.Root.ProfilesDirectory));
     }
 
+    [Fact]
+    public async Task Damaged_compressed_content_is_reported_as_corrupt_not_thrown()
+    {
+        await using var profile = await TestProfile.CreateAsync();
+        var archive = await CreateValidArchiveAsync(profile);
+
+        // Overwrite bytes inside the compressed database entry; the ZIP directory stays readable.
+        var bytes = await File.ReadAllBytesAsync(archive, Ct);
+        for (var i = bytes.Length / 3; i < bytes.Length / 3 + 64; i++)
+        {
+            bytes[i] ^= 0x5A;
+        }
+
+        await File.WriteAllBytesAsync(archive, bytes, Ct);
+
+        var result = await Service(profile.Root).RestoreAsNewProfileAsync(archive, Ct);
+
+        Assert.Equal(ErrorCode.CorruptData, result.Error?.Code);
+        Assert.Single(Directory.GetDirectories(profile.Root.ProfilesDirectory));
+    }
+
     [Theory]
     [InlineData("formatVersion", 2, ErrorCode.UnsupportedVersion)]
     [InlineData("dataSchemaVersion", "29991231000000_FromTheFuture", ErrorCode.UnsupportedVersion)]

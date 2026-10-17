@@ -387,14 +387,14 @@
       "eventplanner.core": {
         "type": "Project",
         "dependencies": {
-          "EventPlanner.Contracts": "[0.1.0, )",
+          "EventPlanner.Contracts": "[1.0.0, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )"
         }
       },
       "eventplanner.infrastructure": {
         "type": "Project",
         "dependencies": {
-          "EventPlanner.Core": "[0.1.0, )",
+          "EventPlanner.Core": "[1.0.0, )",
           "Microsoft.EntityFrameworkCore.Sqlite": "[10.0.13, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )"
         }

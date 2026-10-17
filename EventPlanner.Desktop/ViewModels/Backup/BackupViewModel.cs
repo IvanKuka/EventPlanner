@@ -8,6 +8,7 @@ using EventPlanner.Desktop.Localization;
 using EventPlanner.Desktop.Platform;
 using EventPlanner.Infrastructure.Backup;
 using EventPlanner.Infrastructure.Profiles;
+using Microsoft.Extensions.Logging;
 
 namespace EventPlanner.Desktop.ViewModels.Backup;
 
@@ -22,7 +23,8 @@ public sealed partial class BackupViewModel(
     OpenedProfile profile,
     DataRoot dataRoot,
     IPlatformServices platform,
-    TimeProvider clock) : ViewModelBase, IPage
+    TimeProvider clock,
+    ILogger<BackupViewModel> logger) : ViewModelBase, IPage
 {
     public string Title => Strings.Nav_Backup;
 
@@ -52,6 +54,7 @@ public sealed partial class BackupViewModel(
         Diagnostics.Add(new(Strings.Diag_Profile, profile.Name));
         Diagnostics.Add(new(Strings.Diag_Schema, profile.SchemaVersion));
         Diagnostics.Add(new(Strings.Diag_DataFolder, dataRoot.Path));
+        Diagnostics.Add(new(Strings.Diag_Logs, dataRoot.LogsDirectory));
         Diagnostics.Add(new(Strings.Diag_FreeSpace, FreeSpaceText()));
         return Task.CompletedTask;
     }
@@ -117,7 +120,17 @@ public sealed partial class BackupViewModel(
             return;
         }
 
-        dataRoot.SetActiveProfile(Restored.ProfileName);
+        try
+        {
+            dataRoot.SetActiveProfile(Restored.ProfileName);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            logger.LogError(ex, "Active profile could not be switched");
+            ErrorMessage = Strings.Backup_FileError;
+            return;
+        }
+
         platform.Shutdown(0);
     }
 
@@ -133,6 +146,13 @@ public sealed partial class BackupViewModel(
         try
         {
             await action();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // e.g. the chosen drive was removed or the file is locked: reported here instead of
+            // crashing the app; the active profile is never touched by these operations.
+            logger.LogError(ex, "Backup operation failed");
+            ErrorMessage = Strings.Backup_FileError;
         }
         finally
         {

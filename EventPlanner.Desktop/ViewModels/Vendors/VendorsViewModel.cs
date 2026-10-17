@@ -9,6 +9,7 @@ using EventPlanner.Core.Services.Budget;
 using EventPlanner.Core.Services.Vendors;
 using EventPlanner.Desktop.Localization;
 using EventPlanner.Desktop.ViewModels.Shell;
+using Microsoft.Extensions.Logging;
 
 namespace EventPlanner.Desktop.ViewModels.Vendors;
 
@@ -22,17 +23,20 @@ public sealed partial class VendorsViewModel : ViewModelBase, IPage
     private readonly QuoteComparisonService _comparison;
     private readonly BudgetService _budget;
     private readonly ActiveProjectContext _active;
+    private readonly ILogger<VendorsViewModel> _logger;
     private EventProjectDto? _project;
     private List<VendorDto> _allVendors = [];
     private bool _isReloading;
     private Guid? _decisionVendorId;
 
-    public VendorsViewModel(VendorService vendors, QuoteComparisonService comparison, BudgetService budget, ActiveProjectContext active)
+    public VendorsViewModel(
+        VendorService vendors, QuoteComparisonService comparison, BudgetService budget, ActiveProjectContext active, ILogger<VendorsViewModel> logger)
     {
         _vendors = vendors;
         _comparison = comparison;
         _budget = budget;
         _active = active;
+        _logger = logger;
         QuoteTransport = TransportOptions[0];
         SelectionPolicy = PolicyOptions[0];
         QuoteVendor = NoVendor;
@@ -88,6 +92,14 @@ public sealed partial class VendorsViewModel : ViewModelBase, IPage
 
     [ObservableProperty]
     public partial bool IsNewVendor { get; set; }
+
+    // Deleting a vendor removes its quotes and decision history; deleting a quote removes its history.
+    // Both are one click away in the ribbon, so they ask first.
+    [ObservableProperty]
+    public partial bool IsConfirmingVendorDelete { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsConfirmingQuoteDelete { get; set; }
 
     [ObservableProperty]
     public partial string VendorCategory { get; set; } = string.Empty;
@@ -252,8 +264,22 @@ public sealed partial class VendorsViewModel : ViewModelBase, IPage
     }
 
     [RelayCommand]
+    private void RequestDeleteVendor() => IsConfirmingVendorDelete = SelectedVendor is not null;
+
+    [RelayCommand]
+    private void RequestDeleteQuote() => IsConfirmingQuoteDelete = SelectedQuote is not null;
+
+    [RelayCommand]
+    private void CancelDelete()
+    {
+        IsConfirmingVendorDelete = false;
+        IsConfirmingQuoteDelete = false;
+    }
+
+    [RelayCommand]
     private async Task DeleteVendorAsync()
     {
+        IsConfirmingVendorDelete = false;
         if (SelectedVendor is null || _project is null)
         {
             return;
@@ -340,6 +366,7 @@ public sealed partial class VendorsViewModel : ViewModelBase, IPage
     [RelayCommand]
     private async Task DeleteQuoteAsync()
     {
+        IsConfirmingQuoteDelete = false;
         if (SelectedQuote is null || _project is null)
         {
             return;
@@ -489,6 +516,11 @@ public sealed partial class VendorsViewModel : ViewModelBase, IPage
             return; // Results for a project that is no longer active are dropped.
         }
 
+        // A bound ComboBox writes null back when its items are cleared, so the choices are captured
+        // first and restored below; a null option would break every later ".Value" read.
+        var quoteVendorId = QuoteVendor?.Value;
+        var budgetItemId = SelectionBudgetItem?.Value;
+
         _allVendors = [.. vendorsTask.Result];
         Vendors.Clear();
         VendorOptions.Clear();
@@ -509,7 +541,8 @@ public sealed partial class VendorsViewModel : ViewModelBase, IPage
             }
         }
 
-        SelectionBudgetItem = BudgetItemOptions.FirstOrDefault(o => o.Value == SelectionBudgetItem.Value) ?? NoBudgetItem;
+        QuoteVendor = VendorOptions.FirstOrDefault(o => o.Value == quoteVendorId) ?? NoVendor;
+        SelectionBudgetItem = BudgetItemOptions.FirstOrDefault(o => o.Value == budgetItemId) ?? NoBudgetItem;
 
         var wantedCategory = category ?? SelectedCategory;
         _isReloading = true;
@@ -550,6 +583,7 @@ public sealed partial class VendorsViewModel : ViewModelBase, IPage
         }
     }
 
+    /// <summary>Started from a combo box change (fire-and-forget), so failures are logged and shown here.</summary>
     private async Task ReloadComparisonSafelyAsync()
     {
         if (_project is null)
@@ -557,7 +591,15 @@ public sealed partial class VendorsViewModel : ViewModelBase, IPage
             return;
         }
 
-        await ReloadComparisonAsync(_project, CancellationToken.None);
+        try
+        {
+            await ReloadComparisonAsync(_project, CancellationToken.None);
+        }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or Microsoft.Data.Sqlite.SqliteException)
+        {
+            _logger.LogError(ex, "Quote comparison could not be loaded");
+            ErrorMessage = Strings.Error_Unexpected;
+        }
     }
 
     private async Task ReloadComparisonAsync(EventProjectDto project, CancellationToken cancellationToken)
@@ -595,6 +637,7 @@ public sealed partial class VendorsViewModel : ViewModelBase, IPage
 
     private void EditVendor(VendorDto vendor)
     {
+        CancelDelete();
         SelectedQuote = null;
         IsEditingQuote = false;
         IsEditingVendor = true;
@@ -609,6 +652,7 @@ public sealed partial class VendorsViewModel : ViewModelBase, IPage
 
     private void EditQuote(QuoteDto quote)
     {
+        CancelDelete();
         // Clear the vendor selection so clicking the same vendor again reopens its editor.
         SelectedVendor = null;
         IsEditingVendor = false;
@@ -643,7 +687,19 @@ public sealed partial class VendorsViewModel : ViewModelBase, IPage
             return;
         }
 
-        var decisions = await _vendors.ListDecisionsAsync(id, CancellationToken.None);
+        IReadOnlyList<QuoteDecisionDto> decisions;
+        try
+        {
+            decisions = await _vendors.ListDecisionsAsync(id, CancellationToken.None);
+        }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or Microsoft.Data.Sqlite.SqliteException)
+        {
+            // Not awaited by the UI: without this the failure would only surface as an unobserved task.
+            _logger.LogError(ex, "Decision history of vendor {VendorId} could not be loaded", id);
+            ErrorMessage = Strings.Error_Unexpected;
+            return;
+        }
+
         if (_decisionVendorId != id)
         {
             return; // Another vendor was opened meanwhile.
@@ -658,6 +714,7 @@ public sealed partial class VendorsViewModel : ViewModelBase, IPage
 
     private void ClearMessages()
     {
+        CancelDelete();
         Errors = FieldErrors.None;
         ErrorMessage = null;
         InfoMessage = null;

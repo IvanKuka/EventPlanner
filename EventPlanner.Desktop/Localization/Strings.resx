@@ -13,10 +13,39 @@
   <data name="Nav_Guests" xml:space="preserve"><value>Hostia</value></data>
   <data name="Nav_Backup" xml:space="preserve"><value>Záloha a obnova</value></data>
   <data name="Shell_NoProject" xml:space="preserve"><value>Žiadny vybraný projekt</value></data>
+  <data name="Shell_SwitchProject" xml:space="preserve"><value>Prepnúť projekt</value></data>
+  <data name="Shell_Projects" xml:space="preserve"><value>Projekty</value></data>
+  <data name="Shell_EditProject" xml:space="preserve"><value>Upraviť projekt</value></data>
+  <data name="Shell_YourProjects" xml:space="preserve"><value>Vaše projekty</value></data>
+  <data name="Shell_ManageProjects" xml:space="preserve"><value>Spravovať projekty</value></data>
+  <data name="Shell_Backup" xml:space="preserve"><value>Záloha</value></data>
+  <data name="Shell_Theme" xml:space="preserve"><value>Vzhľad</value></data>
+  <data name="Theme_System" xml:space="preserve"><value>Podľa systému</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>Svetlý</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>Tmavý</value></data>
+  <data name="Ribbon_Projects" xml:space="preserve"><value>Projekty</value></data>
+  <data name="Ribbon_Guests" xml:space="preserve"><value>Hostia</value></data>
+  <data name="Ribbon_Groups" xml:space="preserve"><value>Skupiny</value></data>
+  <data name="Ribbon_Privacy" xml:space="preserve"><value>Súkromie</value></data>
+  <data name="Ribbon_Vendors" xml:space="preserve"><value>Dodávatelia</value></data>
+  <data name="Ribbon_Quotes" xml:space="preserve"><value>Ponuky</value></data>
+  <data name="Ribbon_Items" xml:space="preserve"><value>Položky</value></data>
+  <data name="Ribbon_Payments" xml:space="preserve"><value>Platby</value></data>
+  <data name="Ribbon_Backup" xml:space="preserve"><value>Záloha</value></data>
+  <data name="Ribbon_Restore" xml:space="preserve"><value>Obnova</value></data>
+  <data name="Ribbon_DeleteGuest" xml:space="preserve"><value>Zmazať hosťa</value></data>
+  <data name="Ribbon_DeleteGroup" xml:space="preserve"><value>Zmazať skupinu</value></data>
+  <data name="Ribbon_RevealNote" xml:space="preserve"><value>Súkromná poznámka</value></data>
+  <data name="Ribbon_DeleteVendor" xml:space="preserve"><value>Zmazať dodávateľa</value></data>
+  <data name="Ribbon_DeleteQuote" xml:space="preserve"><value>Zmazať ponuku</value></data>
+  <data name="Ribbon_DeleteItem" xml:space="preserve"><value>Zmazať položku</value></data>
+  <data name="Ribbon_MarkPaid" xml:space="preserve"><value>Uhradiť platbu</value></data>
+  <data name="Ribbon_CreateBackup" xml:space="preserve"><value>Vytvoriť zálohu</value></data>
+  <data name="Ribbon_RestoreBackup" xml:space="preserve"><value>Obnoviť zo zálohy</value></data>
   <data name="Status_ProfileLabel" xml:space="preserve"><value>Profil:</value></data>
   <data name="Startup_Loading" xml:space="preserve"><value>Otvára sa profil…</value></data>
   <data name="Startup_FailedTitle" xml:space="preserve"><value>Profil sa nepodarilo otvoriť</value></data>
-  <data name="Startup_Locked" xml:space="preserve"><value>Tento profil už používa iné spustené okno aplikácie. Zavrite ho a spustite aplikáciu znova. Dáta neboli zmenené.</value></data>
+  <data name="Startup_Locked" xml:space="preserve"><value>Tento profil už používa iné spustené okno aplikácie, ktoré sa nepodarilo zobraziť (môže byť minimalizované na paneli úloh alebo ide o staršiu verziu). Prepnite sa doň, prípadne ho zavrite a spustite aplikáciu znova. Dáta neboli zmenené.</value></data>
   <data name="Startup_NewerSchema" xml:space="preserve"><value>Tento profil vytvorila novšia verzia aplikácie. Dáta zostali nedotknuté. Nainštalujte novšiu verziu alebo obnovte inú zálohu.</value></data>
   <data name="Startup_InsufficientSpace" xml:space="preserve"><value>Na disku nie je dosť miesta na bezpečnú zálohu pred aktualizáciou dát. Uvoľnite miesto a spustite aplikáciu znova.</value></data>
   <data name="Startup_Corrupt" xml:space="preserve"><value>Kontrola integrity profilu zlyhala, preto sa neotvoril na zápis. Dáta neboli zmenené. Môžete obnoviť profil zo zálohy.</value></data>
@@ -51,6 +80,9 @@
   <data name="Error_UnsupportedVersion" xml:space="preserve"><value>Súbor vytvorila nepodporovaná (novšia) verzia aplikácie. Nič nebolo zmenené.</value></data>
   <data name="Error_Cancelled" xml:space="preserve"><value>Operácia bola zrušená.</value></data>
   <data name="Error_Unexpected" xml:space="preserve"><value>Operácia zlyhala.</value></data>
+  <data name="Error_UnexpectedRecovered" xml:space="preserve"><value>Nastala neočakávaná chyba a posledná akcia sa nemusela dokončiť. Uložené údaje sú v poriadku; stránka sa znova načítala. Podrobnosti sú v logu aplikácie (Záloha → Diagnostika).</value></data>
+  <data name="Common_Close" xml:space="preserve"><value>Zavrieť</value></data>
+  <data name="Backup_FileError" xml:space="preserve"><value>Súbor zálohy sa nepodarilo zapísať ani prečítať. Skontrolujte, či je disk pripojený, súbor nie je otvorený v inom programe a máte oprávnenie na zápis.</value></data>
 
   <!-- Validation -->
   <data name="Validation_Required" xml:space="preserve"><value>Povinné pole.</value></data>
@@ -61,6 +93,13 @@
   <data name="Validation_EndBeforeStart" xml:space="preserve"><value>Koniec nemôže byť pred začiatkom.</value></data>
   <data name="Validation_InvalidTransition" xml:space="preserve"><value>Do tohto stavu nie je možné prejsť.</value></data>
   <data name="Validation_ConfirmationRequired" xml:space="preserve"><value>Potvrďte kontrolný zoznam pred označením projektu ako pripraveného.</value></data>
+  <data name="Validation_ConfirmationMismatch" xml:space="preserve"><value>Napísaný názov sa nezhoduje s názvom projektu.</value></data>
+  <data name="Events_Delete" xml:space="preserve"><value>Zmazať projekt</value></data>
+  <data name="Events_DeleteTitle" xml:space="preserve"><value>Natrvalo zmazať projekt</value></data>
+  <data name="Events_DeleteWarning" xml:space="preserve"><value>Zmaže sa projekt so všetkými hosťami, skupinami, dodávateľmi, ponukami, históriou rozhodnutí, rozpočtom a platbami. Nedá sa to vrátiť späť. Ak si údaje chcete ponechať, najprv vytvorte zálohu.</value></data>
+  <data name="Events_DeleteTypeName" xml:space="preserve"><value>Pre potvrdenie napíšte názov projektu</value></data>
+  <data name="Events_DeleteConfirm" xml:space="preserve"><value>Natrvalo zmazať</value></data>
+  <data name="Events_Deleted" xml:space="preserve"><value>Projekt „{0}“ bol zmazaný.</value></data>
   <data name="Validation_UnknownReference" xml:space="preserve"><value>Vybraná položka nepatrí do tohto projektu.</value></data>
   <data name="Validation_NotInGroup" xml:space="preserve"><value>Hosť nie je členom skupiny.</value></data>
   <data name="Validation_InvalidValue" xml:space="preserve"><value>Neplatná hodnota.</value></data>
@@ -157,6 +196,7 @@
   <data name="Guests_RevealNote" xml:space="preserve"><value>Zobraziť súkromnú poznámku</value></data>
   <data name="Guests_PrivateNoteHint" xml:space="preserve"><value>Poznámka sa nezobrazuje v zozname a nebude súčasťou bežných exportov.</value></data>
   <data name="Guests_ConfirmDelete" xml:space="preserve"><value>Naozaj zmazať tohto hosťa? Túto akciu nie je možné vrátiť.</value></data>
+  <data name="Guests_ConfirmDeleteGroup" xml:space="preserve"><value>Zmazať skupinu? Hostia v nej zostanú v zozname, len už nebudú patriť do žiadnej skupiny. Kontakt a poznámky skupiny sa stratia.</value></data>
   <data name="Guests_GroupDetail" xml:space="preserve"><value>Skupina</value></data>
   <data name="Guests_GroupLabel" xml:space="preserve"><value>Názov skupiny</value></data>
   <data name="Guests_ContactName" xml:space="preserve"><value>Kontaktná osoba</value></data>
@@ -191,6 +231,7 @@
   <data name="Diag_Profile" xml:space="preserve"><value>Profil</value></data>
   <data name="Diag_Schema" xml:space="preserve"><value>Verzia dát</value></data>
   <data name="Diag_DataFolder" xml:space="preserve"><value>Dátový priečinok</value></data>
+  <data name="Diag_Logs" xml:space="preserve"><value>Logy</value></data>
   <data name="Diag_FreeSpace" xml:space="preserve"><value>Voľné miesto</value></data>
 
   <!-- Money (Etapa 2) -->
@@ -273,6 +314,8 @@
   <data name="Vendors_UnknownHint" xml:space="preserve"><value>Prázdne pole znamená „neuvedené“, nie nulu ani zahrnutú službu.</value></data>
   <data name="Vendors_ValidUntilLabel" xml:space="preserve"><value>Ponuka platí do</value></data>
   <data name="Vendors_Decline" xml:space="preserve"><value>Odmietnuť</value></data>
+  <data name="Vendors_ConfirmDeleteVendor" xml:space="preserve"><value>Zmazať dodávateľa aj so všetkými jeho ponukami a históriou rozhodnutí? Položky rozpočtu zostanú, stratia len prepojenie na ponuku.</value></data>
+  <data name="Vendors_ConfirmDeleteQuote" xml:space="preserve"><value>Zmazať ponuku aj s jej históriou rozhodnutí? Položka rozpočtu z nej zostane, stratí len prepojenie. Ak ponuku len nechcete, použite Odmietnuť.</value></data>
   <data name="Vendors_QuoteDeclined" xml:space="preserve"><value>Ponuka je označená ako odmietnutá.</value></data>
   <data name="Vendors_SelectTitle" xml:space="preserve"><value>Rozhodnutie o ponuke</value></data>
   <data name="Vendors_DecisionNote" xml:space="preserve"><value>Dôvod rozhodnutia (nepovinné)</value></data>

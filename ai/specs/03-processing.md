@@ -2,7 +2,7 @@
 
 ## Projekt a spolupráca
 
-Draft → Planning → Ready → Completed → Archived. Stav Ready vyžaduje manuálne potvrdenie po checklistu; otvorené úlohy sa tým nestratia. Archivovaný projekt je read-only do explicitného odomknutia. Implementované prechody (`EventStatusRules`): Draft→Planning, Planning→Draft|Ready, Ready→Planning|Completed, Completed→Ready|Archived, Archived→Completed (odomknutie). Jeden aktívny lokálny writer, žiadne otvorenie živej DB cez SMB/iCloud/Dropbox ako mechanizmus spolupráce.
+Draft → Planning → Ready → Completed → Archived. Stav Ready vyžaduje manuálne potvrdenie po checklistu; otvorené úlohy sa tým nestratia. Archivovaný projekt je read-only do explicitného odomknutia. Implementované prechody (`EventStatusRules`): Draft→Planning, Planning→Draft|Ready, Ready→Planning|Completed, Completed→Ready|Archived, Archived→Completed (odomknutie). Jeden aktívny lokálny writer, žiadne otvorenie živej DB cez SMB/iCloud/Dropbox ako mechanizmus spolupráce. Zmazanie projektu (`DeleteEventProject(id, expectedRevision, confirmationName)`) je trvalé, v každom stave vrátane archívu; vyžaduje presne napísaný názov projektu (kontroluje ho Core, nie len UI) a databáza kaskádovo zmaže program, hostí, skupiny, dodávateľov, ponuky, históriu rozhodnutí, rozpočet a platby. UI pred zmazaním odporučí zálohu.
 
 Odovzdanie vytvorí exportId, projectId, revision a parentExportId, ak existuje. Import sa otvorí ako nová lokálna kópia s provenance. Ak už projekt existuje, UI ukáže vetvenie a ponúkne ponechať oddelene alebo po zálohe vedome nahradiť celý projekt; neexistuje implicitný merge. Dve rozpracované vetvy sa v MVP nezlučujú automaticky. Export kontaktného zoznamu nie je úplná záloha.
 

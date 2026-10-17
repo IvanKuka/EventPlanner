@@ -47,6 +47,9 @@ public interface IEventProjectStore
     Task<EventProject?> FindAsync(Guid id, CancellationToken cancellationToken);
 
     void Add(EventProject project);
+
+    /// <summary>Removes the project; the database cascades to everything the project owns.</summary>
+    void Remove(EventProject project);
 }
 
 public interface IGuestStore

@@ -8,7 +8,7 @@ Cieľová kompatibilita: Windows 11 x64; Windows 10 22H2 iba ako overená kompat
 
 ## Návrh GitHub Actions
 
-Implementované: `.github/workflows/ci.yml` (PR/main: locked restore, format, build, test na Windows a macOS), `desktop-build.yml` (publish, smoke test, balíky pre tri RID), `release.yml` (tag → validácia → build → draft release s SHA256SUMS a manifestom). Skripty: `build/publish.ps1`, `build/smoke-test.ps1`, `build/package-windows.ps1` (Inno Setup `installer/windows/EventPlanner.iss`), `build/package-macos.sh` (ad-hoc podpis, DMG/ZIP, `installer/macos/Info.plist`), `build/validate-release.sh`. Workflowy ešte neboli spustené na GitHube; release vzniká ako draft a publikuje sa manuálne.
+Implementované: `.github/workflows/ci.yml` (PR/main: locked restore, format, build, test na Windows a macOS), `desktop-build.yml` (publish, smoke test, balíky pre tri RID), `release.yml` (tag `vX.Y.Z` zhodný s `<Version>` v Directory.Build.props → validácia → build troch RID → priamo zverejnený release s balíkmi, SHA256SUMS a manifestom; existujúci release sa neprepíše). Skripty: `build/publish.ps1`, `build/smoke-test.ps1`, `build/package-windows.ps1` (Inno Setup `installer/windows/EventPlanner.iss`), `build/package-macos.sh` (ad-hoc podpis, DMG/ZIP, `installer/macos/Info.plist`), `build/validate-release.sh`. Workflowy ešte neboli spustené na GitHube; release vzniká ako draft a publikuje sa manuálne.
 
 1. Pull request: locked restore, formatter/analyzers, unit a integration testy; matrix pre filesystem/platformové hranice. Nemá release secrets ani oprávnenie zapisovať release.
 2. Main a workflow_dispatch: publish a packaging na Windows, Apple Silicon a Intel runneri; natívne závislosti podľa RID; upload artifactov.

@@ -48,7 +48,10 @@ public sealed class BudgetService(IDataSessionFactory sessions, ILogger<BudgetSe
 
         var item = BudgetItem.Create(Guid.CreateVersion7(), command.EventId, command.Category, command.Title, command.EstimatedMinor, command.CommittedMinor, currency!);
         session.Budget.AddItem(item);
-        await session.SaveChangesAsync(cancellationToken);
+        if (await session.SaveChangesAsync(cancellationToken) == SaveOutcome.Conflict)
+        {
+            return OperationError.Conflict(BudgetItemEntity);
+        }
 
         IReadOnlyList<Warning> warnings = string.Equals(item.Currency, writable.Value.Currency, StringComparison.Ordinal)
             ? []

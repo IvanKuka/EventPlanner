@@ -12,7 +12,7 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <Company>EventPlanner</Company>
     <Product>EventPlanner</Product>
-    <Version>0.1.0</Version>
+    <Version>1.0.0</Version>
     <NeutralLanguage>sk</NeutralLanguage>
   </PropertyGroup>
 </Project>

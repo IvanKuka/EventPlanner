@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using EventPlanner.Contracts.Events;
 using EventPlanner.Desktop.Composition;
 using EventPlanner.Desktop.Localization;
 using EventPlanner.Desktop.Platform;
@@ -36,6 +37,7 @@ public sealed partial class ShellViewModel : ViewModelBase, IDisposable
     private readonly ILoggerFactory _loggerFactory;
     private readonly IPlatformServices _platform;
     private readonly ILogger<ShellViewModel> _logger;
+    private readonly ThemePreferenceStore _themes;
     private OpenedProfile? _profile;
     private ServiceProvider? _services;
     private ActiveProjectContext? _activeProject;
@@ -47,9 +49,45 @@ public sealed partial class ShellViewModel : ViewModelBase, IDisposable
         _loggerFactory = loggerFactory;
         _platform = platform;
         _logger = loggerFactory.CreateLogger<ShellViewModel>();
+
+        // The theme is applied before any profile opens, so start-up and recovery screens use it too.
+        _themes = new ThemePreferenceStore(options.DataRoot, loggerFactory.CreateLogger<ThemePreferenceStore>());
+        Theme = _themes.Read();
+        _platform.ApplyTheme(Theme);
     }
 
+    public AppTheme Theme { get; private set; }
+
+    public bool IsSystemTheme => Theme == AppTheme.System;
+
+    public bool IsLightTheme => Theme == AppTheme.Light;
+
+    public bool IsDarkTheme => Theme == AppTheme.Dark;
+
+    /// <summary>Every page, including the ones reached from the header (projects, backup).</summary>
     public ObservableCollection<IPage> Pages { get; } = [];
+
+    /// <summary>Pages of the active project, shown as tabs.</summary>
+    public ObservableCollection<IPage> TabPages { get; } = [];
+
+    /// <summary>Project list and editor; opened from the project switcher, not a tab.</summary>
+    public EventsViewModel? ProjectsPage { get; private set; }
+
+    public BackupViewModel? BackupPage { get; private set; }
+
+    /// <summary>The selected tab, or null while a header page (projects, backup) is shown.</summary>
+    public IPage? SelectedTab
+    {
+        get => SelectedPage is { } page && TabPages.Contains(page) ? page : null;
+        set
+        {
+            // The tab strip clears its selection when a header page opens; that is not a navigation.
+            if (value is not null)
+            {
+                SelectedPage = value;
+            }
+        }
+    }
 
     [ObservableProperty]
     public partial ShellState State { get; set; } = ShellState.Loading;
@@ -72,27 +110,59 @@ public sealed partial class ShellViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     public partial string ProjectTitle { get; set; } = Strings.Shell_NoProject;
 
+    // The active project's bar under the tabs (the "open document" row of the AdobeNew layout).
+    [ObservableProperty]
+    public partial string? ProjectName { get; set; }
+
+    [ObservableProperty]
+    public partial string? ProjectStatusText { get; set; }
+
+    [ObservableProperty]
+    public partial string? ProjectDetailsText { get; set; }
+
+    [ObservableProperty]
+    public partial string WindowTitle { get; set; } = Strings.App_Title;
+
+    /// <summary>Banner after an unexpected failure that the app survived (see <see cref="UnexpectedErrors"/>).</summary>
+    [ObservableProperty]
+    public partial string? UnexpectedErrorMessage { get; set; }
+
+    /// <summary>The project bar belongs to the project's tabs, not to the projects or backup screens.</summary>
+    public bool ShowProjectBar => ProjectName is not null && SelectedTab is not null;
+
     public bool IsLoading => State == ShellState.Loading;
 
     public bool IsReady => State == ShellState.Ready;
 
     public bool IsFailed => State == ShellState.Failed;
 
+    public bool IsProjectsOpen => SelectedPage is not null && SelectedPage == ProjectsPage;
+
+    public bool IsBackupOpen => SelectedPage is not null && SelectedPage == BackupPage;
+
     /// <summary>Completes when startup either succeeded or failed; never throws.</summary>
     public async Task<bool> InitializeAsync(CancellationToken cancellationToken)
     {
         var profileName = _options.DataRoot.ReadActiveProfileName();
+        var profileDirectory = _options.DataRoot.ProfileDirectory(profileName);
         ProfileName = profileName;
         try
         {
             var opener = new ProfileOpener(TimeProvider.System, _loggerFactory.CreateLogger<ProfileOpener>());
 
             // Migrations and integrity checks must not run on the UI thread.
-            var result = await Task.Run(
-                () => opener.OpenAsync(profileName, _options.DataRoot.ProfileDirectory(profileName), cancellationToken),
-                cancellationToken);
+            var result = await Task.Run(() => opener.OpenAsync(profileName, profileDirectory, cancellationToken), cancellationToken);
             if (result.Profile is null)
             {
+                // A second start of the same profile shows the window that already has it open
+                // (e.g. minimized) instead of an error; the locked message is only for no answer.
+                if (result.Status == ProfileOpenStatus.Locked && await _platform.TryActivateRunningInstanceAsync(profileDirectory))
+                {
+                    _logger.LogInformation("Profile {Profile} is open in another window; brought it to the front", profileName);
+                    _platform.Shutdown(0);
+                    return false;
+                }
+
                 Fail(result.Status switch
                 {
                     ProfileOpenStatus.Locked => Strings.Startup_Locked,
@@ -104,19 +174,34 @@ public sealed partial class ShellViewModel : ViewModelBase, IDisposable
             }
 
             _profile = result.Profile;
+
+            // From the moment this instance holds the profile lock, a later start must find it.
+            _platform.ListenForActivation(profileDirectory);
             _services = AppServices.BuildForProfile(_options, _loggerFactory, _profile, _platform);
             _activeProject = _services.GetRequiredService<ActiveProjectContext>();
             _activeProject.PropertyChanged += OnActiveProjectChanged;
 
-            Pages.Add(_services.GetRequiredService<EventsViewModel>());
-            Pages.Add(_services.GetRequiredService<OverviewViewModel>());
-            Pages.Add(_services.GetRequiredService<GuestsViewModel>());
-            Pages.Add(_services.GetRequiredService<VendorsViewModel>());
-            Pages.Add(_services.GetRequiredService<BudgetViewModel>());
-            Pages.Add(_services.GetRequiredService<BackupViewModel>());
+            ProjectsPage = _services.GetRequiredService<EventsViewModel>();
+            BackupPage = _services.GetRequiredService<BackupViewModel>();
+            TabPages.Add(_services.GetRequiredService<OverviewViewModel>());
+            TabPages.Add(_services.GetRequiredService<GuestsViewModel>());
+            TabPages.Add(_services.GetRequiredService<VendorsViewModel>());
+            TabPages.Add(_services.GetRequiredService<BudgetViewModel>());
+            Pages.Add(ProjectsPage);
+            foreach (var tab in TabPages)
+            {
+                Pages.Add(tab);
+            }
 
+            Pages.Add(BackupPage);
+            OnPropertyChanged(nameof(ProjectsPage));
+            OnPropertyChanged(nameof(BackupPage));
+
+            // The project list is loaded first so the switcher is filled and the first project becomes
+            // active; without any project the app opens on the project editor instead of empty tabs.
+            await ProjectsPage.ActivateAsync(cancellationToken);
             State = ShellState.Ready;
-            SelectedPage = Pages[0];
+            SelectedPage = ProjectsPage.Projects.Count > 0 ? TabPages[0] : ProjectsPage;
             return true;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
@@ -154,6 +239,52 @@ public sealed partial class ShellViewModel : ViewModelBase, IDisposable
     [RelayCommand]
     private void Exit() => _platform.Shutdown(0);
 
+    /// <summary>
+    /// Called for an unhandled UI exception the app survives: the user is told the action did not
+    /// finish, and the shown page reloads so it no longer displays a half-applied state.
+    /// </summary>
+    public void ReportUnexpectedError()
+    {
+        UnexpectedErrorMessage = Strings.Error_UnexpectedRecovered;
+        if (SelectedPage is { } page)
+        {
+            Activate(page);
+        }
+    }
+
+    [RelayCommand]
+    private void DismissUnexpectedError() => UnexpectedErrorMessage = null;
+
+    [RelayCommand]
+    private void OpenProjects() => SelectedPage = ProjectsPage;
+
+    [RelayCommand]
+    private void NewProject()
+    {
+        ProjectsPage?.NewProjectCommand.Execute(null);
+        SelectedPage = ProjectsPage;
+    }
+
+    [RelayCommand]
+    private void OpenBackup() => SelectedPage = BackupPage;
+
+    [RelayCommand]
+    private void SetTheme(AppTheme theme)
+    {
+        if (!Enum.IsDefined(theme) || theme == Theme)
+        {
+            return;
+        }
+
+        Theme = theme;
+        _platform.ApplyTheme(theme);
+        _themes.Write(theme);
+        OnPropertyChanged(nameof(Theme));
+        OnPropertyChanged(nameof(IsSystemTheme));
+        OnPropertyChanged(nameof(IsLightTheme));
+        OnPropertyChanged(nameof(IsDarkTheme));
+    }
+
     partial void OnStateChanged(ShellState value)
     {
         OnPropertyChanged(nameof(IsLoading));
@@ -163,14 +294,21 @@ public sealed partial class ShellViewModel : ViewModelBase, IDisposable
 
     partial void OnSelectedPageChanged(IPage? value)
     {
-        if (value is null)
+        OnPropertyChanged(nameof(SelectedTab));
+        OnPropertyChanged(nameof(ShowProjectBar));
+        OnPropertyChanged(nameof(IsProjectsOpen));
+        OnPropertyChanged(nameof(IsBackupOpen));
+        if (value is not null)
         {
-            return;
+            Activate(value);
         }
+    }
 
+    private void Activate(IPage page)
+    {
         _activationCts?.Cancel();
         _activationCts = new CancellationTokenSource();
-        _ = ActivateSafelyAsync(value, _activationCts.Token);
+        _ = ActivateSafelyAsync(page, _activationCts.Token);
     }
 
     private async Task ActivateSafelyAsync(IPage page, CancellationToken cancellationToken)
@@ -195,6 +333,29 @@ public sealed partial class ShellViewModel : ViewModelBase, IDisposable
         ProjectTitle = project is null
             ? Strings.Shell_NoProject
             : $"{project.Name} · {EnumText.For(project.Status)}";
+        ProjectName = project?.Name;
+        ProjectStatusText = project is null ? null : EnumText.For(project.Status);
+        ProjectDetailsText = project is null ? null : DescribeProject(project);
+        WindowTitle = project is null ? Strings.App_Title : $"{project.Name} – {Strings.App_Title}";
+        OnPropertyChanged(nameof(ShowProjectBar));
+
+        // Pages load their data on activation, so the shown tab is reloaded for the new project. The
+        // project editor itself is what changed the project and keeps its state.
+        if (SelectedPage is { } page && page != ProjectsPage)
+        {
+            Activate(page);
+        }
+    }
+
+    /// <summary>Type, dates and venue in one line, e.g. "Svadba · 12. 6. 2027 – 13. 6. 2027 · Sála".</summary>
+    private static string DescribeProject(EventProjectDto project)
+    {
+        var culture = CultureInfo.CurrentCulture;
+        var dates = project.LocalStartDate == project.LocalEndDate
+            ? project.LocalStartDate.ToString("d", culture)
+            : $"{project.LocalStartDate.ToString("d", culture)} – {project.LocalEndDate.ToString("d", culture)}";
+        string?[] parts = [EnumText.For(project.EventType), dates, project.VenueText];
+        return string.Join(" · ", parts.Where(p => !string.IsNullOrWhiteSpace(p)));
     }
 
     private void Fail(string message, bool canRecover)

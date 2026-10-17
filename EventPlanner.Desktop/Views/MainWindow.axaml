@@ -3,30 +3,134 @@
         xmlns:shell="using:EventPlanner.Desktop.ViewModels.Shell"
         xmlns:vm="using:EventPlanner.Desktop.ViewModels"
         xmlns:l="using:EventPlanner.Desktop.Localization"
+        xmlns:views="using:EventPlanner.Desktop.Views"
+        xmlns:contracts="using:EventPlanner.Contracts.Events"
+        xmlns:composition="using:EventPlanner.Desktop.Composition"
         x:Class="EventPlanner.Desktop.Views.MainWindow"
         x:DataType="shell:ShellViewModel"
-        Title="{x:Static l:Strings.App_Title}"
+        Title="{Binding WindowTitle}"
         Width="1180" Height="760" MinWidth="900" MinHeight="600"
         WindowStartupLocation="CenterScreen">
 
-  <Grid RowDefinitions="Auto,*,Auto">
-    <!-- Header: active project -->
-    <Border Grid.Row="0" Padding="16,10" Background="#14808080">
-      <StackPanel Orientation="Horizontal" Spacing="12">
-        <TextBlock Text="{x:Static l:Strings.App_Title}" FontWeight="SemiBold" VerticalAlignment="Center" />
-        <TextBlock Text="›" Opacity="0.5" VerticalAlignment="Center" />
-        <TextBlock Text="{Binding ProjectTitle}" VerticalAlignment="Center" />
-      </StackPanel>
+  <Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
+    <!-- Header: page tabs and the active project -->
+    <Border Grid.Row="0" Padding="12,0,16,0" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource AppBorderBrush}">
+      <Grid ColumnDefinitions="*,Auto">
+        <ListBox Classes="tabs" ItemsSource="{Binding TabPages}" SelectedItem="{Binding SelectedTab}"
+                 IsVisible="{Binding IsReady}" AutomationProperties.Name="{x:Static l:Strings.Nav_Label}">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:IPage">
+              <StackPanel Classes="icon-text">
+                <Path Classes="icon" Data="{Binding Converter={x:Static views:PageIconConverter.Instance}}" />
+                <TextBlock Text="{Binding Title}" />
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Project switcher and global actions; the projects and backup screens are not tabs. -->
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="12,8,0,8"
+                    IsVisible="{Binding IsReady}">
+          <Button x:Name="ProjectSwitcher" Classes="header" Classes.selected="{Binding IsProjectsOpen}" AutomationProperties.Name="{x:Static l:Strings.Shell_SwitchProject}"
+                  ToolTip.Tip="{x:Static l:Strings.Shell_SwitchProject}">
+            <StackPanel Classes="icon-text">
+              <Path Classes="icon" Data="{StaticResource Icon.Folder}" />
+              <TextBlock Text="{x:Static l:Strings.Shell_Projects}" />
+              <Path Classes="icon" Data="{StaticResource Icon.ChevronDown}" />
+            </StackPanel>
+            <Button.Flyout>
+              <Flyout Placement="BottomEdgeAlignedRight">
+                <StackPanel Width="300" Spacing="6">
+                  <TextBlock Classes="label" Text="{x:Static l:Strings.Shell_YourProjects}" Margin="2,0,0,0" />
+                  <TextBlock Classes="muted" Text="{x:Static l:Strings.Events_Empty}" IsVisible="{Binding !ProjectsPage.Projects.Count}" />
+                  <ListBox ItemsSource="{Binding ProjectsPage.Projects}" SelectedItem="{Binding ProjectsPage.SelectedProject}"
+                           MaxHeight="320" AutomationProperties.Name="{x:Static l:Strings.Shell_YourProjects}"
+                           SelectionChanged="OnProjectPicked">
+                    <ListBox.ItemTemplate>
+                      <DataTemplate x:DataType="contracts:EventSummaryDto">
+                        <StackPanel>
+                          <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                          <TextBlock Text="{Binding LocalStartDate}" Classes="muted" FontSize="12" />
+                        </StackPanel>
+                      </DataTemplate>
+                    </ListBox.ItemTemplate>
+                  </ListBox>
+                  <!-- Stacked full-width buttons: side by side the labels did not fit. -->
+                  <Button Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="OnFlyoutCommand"
+                          views:ButtonIcon.Data="{StaticResource Icon.Add}" Content="{x:Static l:Strings.Events_New}" Command="{Binding NewProjectCommand}" />
+                  <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="OnFlyoutCommand"
+                          views:ButtonIcon.Data="{StaticResource Icon.Folder}" Content="{x:Static l:Strings.Shell_ManageProjects}" Command="{Binding OpenProjectsCommand}" />
+                </StackPanel>
+              </Flyout>
+            </Button.Flyout>
+          </Button>
+          <Button Classes="header" Classes.selected="{Binding IsBackupOpen}" views:ButtonIcon.Data="{StaticResource Icon.Backup}"
+                  Content="{x:Static l:Strings.Shell_Backup}" Command="{Binding OpenBackupCommand}" />
+          <!-- Icon-only to keep the header narrow; the name is in the tooltip and for screen readers. -->
+          <Button Padding="8,6" ToolTip.Tip="{x:Static l:Strings.Shell_Theme}" AutomationProperties.Name="{x:Static l:Strings.Shell_Theme}">
+            <Path Classes="icon" Data="{StaticResource Icon.Theme}" />
+            <Button.Flyout>
+              <MenuFlyout Placement="BottomEdgeAlignedRight">
+                <MenuItem Header="{x:Static l:Strings.Theme_System}" Command="{Binding SetThemeCommand}" CommandParameter="{x:Static composition:AppTheme.System}">
+                  <MenuItem.Icon>
+                    <Path Classes="icon" Data="{StaticResource Icon.Check}" IsVisible="{Binding IsSystemTheme}" />
+                  </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="{x:Static l:Strings.Theme_Light}" Command="{Binding SetThemeCommand}" CommandParameter="{x:Static composition:AppTheme.Light}">
+                  <MenuItem.Icon>
+                    <Path Classes="icon" Data="{StaticResource Icon.Check}" IsVisible="{Binding IsLightTheme}" />
+                  </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="{x:Static l:Strings.Theme_Dark}" Command="{Binding SetThemeCommand}" CommandParameter="{x:Static composition:AppTheme.Dark}">
+                  <MenuItem.Icon>
+                    <Path Classes="icon" Data="{StaticResource Icon.Check}" IsVisible="{Binding IsDarkTheme}" />
+                  </MenuItem.Icon>
+                </MenuItem>
+              </MenuFlyout>
+            </Button.Flyout>
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- Active project bar: which project every tab works on, like the open file row in AdobeNew. -->
+    <Border Grid.Row="1" Classes="project-bar" IsVisible="{Binding ShowProjectBar}">
+      <Grid ColumnDefinitions="Auto,12,*,Auto">
+        <Border Classes="icon-tile">
+          <Path Classes="icon" Data="{StaticResource Icon.Event}" Stroke="{DynamicResource AppAccentBrush}" />
+        </Border>
+        <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="1">
+          <StackPanel Orientation="Horizontal" Spacing="10">
+            <TextBlock Text="{Binding ProjectName}" FontSize="18" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" MaxWidth="560" VerticalAlignment="Center" />
+            <Border Classes="pill" VerticalAlignment="Center">
+              <TextBlock Text="{Binding ProjectStatusText}" />
+            </Border>
+          </StackPanel>
+          <TextBlock Classes="muted" Text="{Binding ProjectDetailsText}" TextTrimming="CharacterEllipsis" />
+        </StackPanel>
+        <Button Grid.Column="3" VerticalAlignment="Center" views:ButtonIcon.Data="{StaticResource Icon.Projects}"
+                Content="{x:Static l:Strings.Shell_EditProject}" Command="{Binding OpenProjectsCommand}" />
+      </Grid>
+    </Border>
+
+    <!-- Unexpected failure the app survived; the page below was reloaded. -->
+    <Border Grid.Row="2" Classes="message error" Margin="16,10,16,0"
+            IsVisible="{Binding UnexpectedErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Text="{Binding UnexpectedErrorMessage}" TextWrapping="Wrap" VerticalAlignment="Center" />
+        <Button Grid.Column="1" Margin="12,0,0,0" views:ButtonIcon.Data="{StaticResource Icon.Close}"
+                Content="{x:Static l:Strings.Common_Close}" Command="{Binding DismissUnexpectedErrorCommand}" />
+      </Grid>
     </Border>
 
     <!-- Loading -->
-    <StackPanel Grid.Row="1" IsVisible="{Binding IsLoading}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+    <StackPanel Grid.Row="3" IsVisible="{Binding IsLoading}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
       <ProgressBar IsIndeterminate="True" Width="240" />
       <TextBlock Text="{x:Static l:Strings.Startup_Loading}" HorizontalAlignment="Center" />
     </StackPanel>
 
     <!-- Startup failure with recovery -->
-    <StackPanel Grid.Row="1" IsVisible="{Binding IsFailed}" MaxWidth="560" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+    <StackPanel Grid.Row="3" IsVisible="{Binding IsFailed}" MaxWidth="560" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
       <TextBlock Classes="h1" Text="{x:Static l:Strings.Startup_FailedTitle}" />
       <TextBlock Text="{Binding FailureMessage}" TextWrapping="Wrap" />
       <TextBlock Text="{Binding RecoveryMessage}" TextWrapping="Wrap" FontWeight="SemiBold"
@@ -38,24 +142,14 @@
       </StackPanel>
     </StackPanel>
 
-    <!-- Ready: navigation + page -->
-    <Grid Grid.Row="1" ColumnDefinitions="200,*" IsVisible="{Binding IsReady}">
-      <ListBox Grid.Column="0" ItemsSource="{Binding Pages}" SelectedItem="{Binding SelectedPage}"
-               AutomationProperties.Name="{x:Static l:Strings.Nav_Label}" Margin="0,8">
-        <ListBox.ItemTemplate>
-          <DataTemplate x:DataType="vm:IPage">
-            <TextBlock Text="{Binding Title}" Margin="4,6" />
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
-      <ContentControl Grid.Column="1" Content="{Binding SelectedPage}" Margin="16,8,16,8" />
-    </Grid>
+    <!-- Ready: selected page -->
+    <ContentControl Grid.Row="3" Content="{Binding SelectedPage}" Margin="16,14,16,8" IsVisible="{Binding IsReady}" />
 
     <!-- Status bar -->
-    <Border Grid.Row="2" Padding="16,4" Background="#0C808080">
+    <Border Grid.Row="4" Padding="16,4,16,6">
       <StackPanel Orientation="Horizontal" Spacing="6">
-        <TextBlock Text="{x:Static l:Strings.Status_ProfileLabel}" Opacity="0.7" FontSize="12" />
-        <TextBlock Text="{Binding ProfileName}" FontSize="12" />
+        <TextBlock Text="{x:Static l:Strings.Status_ProfileLabel}" Classes="muted" FontSize="12" />
+        <TextBlock Text="{Binding ProfileName}" Classes="muted" FontSize="12" />
       </StackPanel>
     </Border>
   </Grid>

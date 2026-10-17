@@ -33,6 +33,7 @@ public sealed partial class EventsViewModel : ViewModelBase, IPage
     private readonly ActiveProjectContext _active;
     private readonly ILogger<EventsViewModel> _logger;
     private EventProjectDto? _loaded;
+    private bool _isNewRequested;
 
     public EventsViewModel(EventProjectService events, ActiveProjectContext active, ILogger<EventsViewModel> logger)
     {
@@ -113,7 +114,19 @@ public sealed partial class EventsViewModel : ViewModelBase, IPage
     [ObservableProperty]
     public partial bool IsBusy { get; set; }
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanConfirmDelete))]
+    public partial bool IsConfirmingDelete { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanConfirmDelete))]
+    public partial string DeleteConfirmationText { get; set; } = string.Empty;
+
     public bool IsExisting => !IsNew;
+
+    /// <summary>The delete button unlocks only once the exact project name is typed.</summary>
+    public bool CanConfirmDelete =>
+        IsConfirmingDelete && _loaded is not null && string.Equals(DeleteConfirmationText.Trim(), _loaded.Name, StringComparison.Ordinal);
 
     public async Task ActivateAsync(CancellationToken cancellationToken)
     {
@@ -123,6 +136,13 @@ public sealed partial class EventsViewModel : ViewModelBase, IPage
         foreach (var project in projects)
         {
             Projects.Add(project);
+        }
+
+        // A new project the user started stays in the editor; reselecting the active project here
+        // would silently replace the empty form when the page is opened from elsewhere.
+        if (_isNewRequested)
+        {
+            return;
         }
 
         if (_active.Project is { } current)
@@ -137,8 +157,15 @@ public sealed partial class EventsViewModel : ViewModelBase, IPage
 
     partial void OnSelectedProjectChanged(EventSummaryDto? value)
     {
+        if (value is null)
+        {
+            return;
+        }
+
+        _isNewRequested = false;
+
         // Re-selecting the project that is already shown (e.g. after a save) needs no reload.
-        if (value is not null && value.Id != _loaded?.Id)
+        if (value.Id != _loaded?.Id)
         {
             _ = LoadProjectAsync(value.Id);
         }
@@ -147,8 +174,76 @@ public sealed partial class EventsViewModel : ViewModelBase, IPage
     [RelayCommand]
     private void NewProject()
     {
+        _isNewRequested = true;
         SelectedProject = null;
         StartNewProject();
+    }
+
+    [RelayCommand]
+    private void RequestDelete()
+    {
+        if (_loaded is null)
+        {
+            return;
+        }
+
+        DeleteConfirmationText = string.Empty;
+        IsConfirmingDelete = true;
+        InfoMessage = null;
+    }
+
+    [RelayCommand]
+    private void CancelDelete()
+    {
+        IsConfirmingDelete = false;
+        DeleteConfirmationText = string.Empty;
+    }
+
+    [RelayCommand]
+    private async Task ConfirmDeleteAsync()
+    {
+        if (_loaded is not { } project || !CanConfirmDelete)
+        {
+            return;
+        }
+
+        IsBusy = true;
+        try
+        {
+            var result = await _events.DeleteAsync(new DeleteEventProject(project.Id, project.Revision, DeleteConfirmationText), CancellationToken.None);
+            Errors = ErrorText.FieldsOf(result.Error);
+            if (!result.IsSuccess)
+            {
+                ErrorMessage = ErrorText.For(result.Error!);
+                return;
+            }
+
+            CancelDelete();
+            ErrorMessage = null;
+            var deleted = Projects.FirstOrDefault(p => p.Id == project.Id);
+            if (deleted is not null)
+            {
+                Projects.Remove(deleted);
+            }
+
+            // Another project becomes active, or none: pages then show "select a project first".
+            if (Projects.Count > 0)
+            {
+                SelectedProject = Projects[0];
+            }
+            else
+            {
+                SelectedProject = null;
+                StartNewProject();
+                _active.Project = null;
+            }
+
+            InfoMessage = string.Format(CultureInfo.CurrentCulture, Strings.Events_Deleted, project.Name);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     [RelayCommand]
@@ -277,6 +372,7 @@ public sealed partial class EventsViewModel : ViewModelBase, IPage
 
     private void Show(EventProjectDto project)
     {
+        CancelDelete();
         _loaded = project;
         IsNew = false;
         IsReadOnly = project.IsReadOnly;
@@ -323,6 +419,7 @@ public sealed partial class EventsViewModel : ViewModelBase, IPage
 
     private void StartNewProject()
     {
+        CancelDelete();
         _loaded = null;
         IsNew = true;
         IsReadOnly = false;

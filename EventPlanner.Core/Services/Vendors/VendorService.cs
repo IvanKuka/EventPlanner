@@ -71,7 +71,10 @@ public sealed class VendorService(IDataSessionFactory sessions, TimeProvider clo
 
         var vendor = Vendor.Create(Guid.CreateVersion7(), command.EventId, command.Category, command.Name, contact, notes);
         session.Vendors.AddVendor(vendor);
-        await session.SaveChangesAsync(cancellationToken);
+        if (await session.SaveChangesAsync(cancellationToken) == SaveOutcome.Conflict)
+        {
+            return OperationError.Conflict(VendorEntity);
+        }
         return vendor.ToDto();
     }
 
@@ -143,7 +146,10 @@ public sealed class VendorService(IDataSessionFactory sessions, TimeProvider clo
 
         var quote = Quote.Create(Guid.CreateVersion7(), vendor.Id, input);
         session.Vendors.AddQuote(quote);
-        await session.SaveChangesAsync(cancellationToken);
+        if (await session.SaveChangesAsync(cancellationToken) == SaveOutcome.Conflict)
+        {
+            return OperationError.Conflict(QuoteEntity);
+        }
         return quote.ToDto();
     }
 

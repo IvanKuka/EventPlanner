@@ -125,6 +125,10 @@ public sealed partial class GuestsViewModel : ViewModelBase, IPage
     [ObservableProperty]
     public partial bool IsConfirmingDelete { get; set; }
 
+    /// <summary>Deleting a group keeps its guests but drops their membership; it still asks first.</summary>
+    [ObservableProperty]
+    public partial bool IsConfirmingGroupDelete { get; set; }
+
     [ObservableProperty]
     public partial GroupDto? SelectedGroup { get; set; }
 
@@ -367,8 +371,15 @@ public sealed partial class GuestsViewModel : ViewModelBase, IPage
     }
 
     [RelayCommand]
+    private void RequestDeleteGroup() => IsConfirmingGroupDelete = SelectedGroup is not null;
+
+    [RelayCommand]
+    private void CancelDeleteGroup() => IsConfirmingGroupDelete = false;
+
+    [RelayCommand]
     private async Task DeleteGroupAsync()
     {
+        IsConfirmingGroupDelete = false;
         if (SelectedGroup is null || _project is null)
         {
             return;
@@ -466,7 +477,9 @@ public sealed partial class GuestsViewModel : ViewModelBase, IPage
 
     private void RebuildOptions(EventProjectDto project)
     {
-        var partFilter = PartFilter.Value;
+        // A bound ComboBox writes null back when its items are cleared, so every choice over these
+        // lists is captured first and restored afterwards.
+        var partFilter = PartFilter?.Value;
         PartFilterOptions.Clear();
         PartFilterOptions.Add(AllParts);
         foreach (var part in project.ProgramParts)
@@ -476,7 +489,8 @@ public sealed partial class GuestsViewModel : ViewModelBase, IPage
 
         PartFilter = PartFilterOptions.FirstOrDefault(o => o.Value == partFilter) ?? AllParts;
 
-        var groupFilter = GroupFilter.Value;
+        var groupFilter = GroupFilter?.Value;
+        var editGroup = EditGroup?.Value;
         GroupFilterOptions.Clear();
         GroupFilterOptions.Add(AllGroups);
         GroupOptions.Clear();
@@ -489,6 +503,7 @@ public sealed partial class GuestsViewModel : ViewModelBase, IPage
         }
 
         GroupFilter = GroupFilterOptions.FirstOrDefault(o => o.Value == groupFilter) ?? AllGroups;
+        EditGroup = GroupOptions.FirstOrDefault(o => o.Value == editGroup) ?? NoGroup;
     }
 
     private async Task DebouncedFilterAsync(CancellationToken cancellationToken)
@@ -585,6 +600,7 @@ public sealed partial class GuestsViewModel : ViewModelBase, IPage
 
     private void EditExistingGroup(GroupDto group)
     {
+        IsConfirmingGroupDelete = false;
         // Only one editor is active; a stale guest selection must not take over after a reload.
         SelectedGuest = null;
         _editing = null;
@@ -617,6 +633,7 @@ public sealed partial class GuestsViewModel : ViewModelBase, IPage
 
     private void ClearMessages()
     {
+        IsConfirmingGroupDelete = false;
         Errors = FieldErrors.None;
         ErrorMessage = null;
         InfoMessage = null;

@@ -1,0 +1,31 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Own line icons on a 16 px grid, drawn as strokes by Path.icon (Styles/AppStyles.axaml).
+       Drawn for this app instead of copying an icon set, so no third-party licence applies. -->
+
+  <!-- Navigation -->
+  <StreamGeometry x:Key="Icon.Projects">M2 4 A1 1 0 0 1 3 3 H6 L7.5 5 H13 A1 1 0 0 1 14 6 V12.5 A1 1 0 0 1 13 13.5 H3 A1 1 0 0 1 2 12.5 Z</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Overview">M2.5 2.5 H7 V7 H2.5 Z M9 2.5 H13.5 V7 H9 Z M2.5 9 H7 V13.5 H2.5 Z M9 9 H13.5 V13.5 H9 Z</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Guests">M8.5 5 A2.5 2.5 0 1 1 3.5 5 A2.5 2.5 0 1 1 8.5 5 Z M1.5 13.5 C1.5 10.8 3.5 9 6 9 C8.5 9 10.5 10.8 10.5 13.5 M10.5 2.8 A2.3 2.3 0 0 1 10.5 7.2 M12 9.3 C13.5 9.9 14.5 11.4 14.5 13.5</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Vendors">M2 6 L3 2.5 H13 L14 6 Z M3 6 V13.5 H13 V6 M6.5 13.5 V10 H9.5 V13.5</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Budget">M2 5 H13 A1 1 0 0 1 14 6 V12.5 A1 1 0 0 1 13 13.5 H3 A1 1 0 0 1 2 12.5 Z M2 5 L10.5 2.5 L11.3 5 M10.5 9.25 H11.5</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Backup">M1.5 2.5 H14.5 V5.5 H1.5 Z M2.5 5.5 V13.5 H13.5 V5.5 M6.5 8.5 H9.5</StreamGeometry>
+
+  <!-- Actions -->
+  <StreamGeometry x:Key="Icon.Add">M8 3 V13 M3 8 H13</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Save">M3 8.5 L6.5 12 L13 4.5</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Delete">M2.5 4.5 H13.5 M6 4.5 V2.5 H10 V4.5 M4 4.5 L4.7 13.5 H11.3 L12 4.5 M6.75 7 V11 M9.25 7 V11</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Close">M4 4 L12 12 M12 4 L4 12</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Select">M14 8 A6 6 0 1 1 2 8 A6 6 0 1 1 14 8 Z M5.5 8 L7.3 9.8 L10.5 6.3</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Export">M8 2.5 V10 M4.5 6.5 L8 10 L11.5 6.5 M2.5 13.5 H13.5</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Import">M8 13.5 V6 M4.5 9.5 L8 6 L11.5 9.5 M2.5 2.5 H13.5</StreamGeometry>
+  <StreamGeometry x:Key="Icon.GuestAdd">M8 5 A2.75 2.75 0 1 1 2.5 5 A2.75 2.75 0 1 1 8 5 Z M1 14 C1 11 2.9 9.25 5.25 9.25 C6.6 9.25 7.8 9.8 8.6 10.8 M12 8.5 V14 M9.25 11.25 H14.75</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Quote">M3.5 1.5 H9.5 L12.5 4.5 V14.5 H3.5 Z M9.5 1.5 V4.5 H12.5 M5.5 7.5 H10.5 M5.5 10 H10.5 M5.5 12.5 H8.5</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Payment">M1.5 3.5 H14.5 V12.5 H1.5 Z M1.5 6.5 H14.5 M4 9.75 H7</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Folder">M2 4 A1 1 0 0 1 3 3 H6 L7.5 5 H13 A1 1 0 0 1 14 6 V12.5 A1 1 0 0 1 13 13.5 H3 A1 1 0 0 1 2 12.5 Z M2 7 H14</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Event">M8 13.5 C5 11.5 1.5 9 1.5 5.8 A3.25 3.25 0 0 1 8 4.5 A3.25 3.25 0 0 1 14.5 5.8 C14.5 9 11 11.5 8 13.5 Z</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Theme">M14 8 A6 6 0 1 1 2 8 A6 6 0 1 1 14 8 Z M8 2 V14 M8 4.5 H12.6 M8 8 H14 M8 11.5 H12.6</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Check">M3.5 8.5 L6.5 11.5 L12.5 5</StreamGeometry>
+  <StreamGeometry x:Key="Icon.ChevronDown">M4.5 6.5 L8 10 L11.5 6.5</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Reveal">M1.5 8 C3 5 5.3 3.5 8 3.5 C10.7 3.5 13 5 14.5 8 C13 11 10.7 12.5 8 12.5 C5.3 12.5 3 11 1.5 8 Z M10 8 A2 2 0 1 1 6 8 A2 2 0 1 1 10 8 Z</StreamGeometry>
+</ResourceDictionary>

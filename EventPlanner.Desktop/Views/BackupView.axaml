@@ -2,55 +2,77 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:backup="using:EventPlanner.Desktop.ViewModels.Backup"
              xmlns:l="using:EventPlanner.Desktop.Localization"
+             xmlns:views="using:EventPlanner.Desktop.Views"
              x:Class="EventPlanner.Desktop.Views.BackupView"
              x:DataType="backup:BackupViewModel">
-  <ScrollViewer>
-    <StackPanel MaxWidth="720" HorizontalAlignment="Left">
-      <TextBlock Classes="h1" Text="{x:Static l:Strings.Nav_Backup}" />
-
-      <Border Classes="message error" IsVisible="{Binding ErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}">
-        <TextBlock Text="{Binding ErrorMessage}" TextWrapping="Wrap" />
-      </Border>
-      <Border Classes="message info" IsVisible="{Binding InfoMessage, Converter={x:Static ObjectConverters.IsNotNull}}">
-        <TextBlock Text="{Binding InfoMessage}" TextWrapping="Wrap" />
-      </Border>
-      <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" Margin="0,4" />
-
-      <Border Classes="card">
-        <StackPanel>
-          <TextBlock Classes="h2" Text="{x:Static l:Strings.Backup_CreateTitle}" />
-          <TextBlock Classes="muted" Text="{x:Static l:Strings.Backup_CreateHint}" />
-          <StackPanel Classes="buttons">
-            <Button Classes="accent" Content="{x:Static l:Strings.Backup_Create}" Command="{Binding CreateBackupCommand}" IsEnabled="{Binding !IsBusy}" />
-            <Button Content="{x:Static l:Strings.Backup_OpenFolder}" Command="{Binding OpenBackupFolderCommand}"
-                    IsVisible="{Binding LastBackupPath, Converter={x:Static ObjectConverters.IsNotNull}}" />
+  <DockPanel>
+    <Border DockPanel.Dock="Top" Classes="ribbon">
+      <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+        <StackPanel Orientation="Horizontal" IsEnabled="{Binding !IsBusy}">
+          <StackPanel Classes="ribbon-group">
+            <TextBlock Classes="ribbon-caption" Text="{x:Static l:Strings.Ribbon_Backup}" />
+            <StackPanel Orientation="Horizontal">
+              <Button Classes="command" views:ButtonIcon.Data="{StaticResource Icon.Export}" Content="{x:Static l:Strings.Ribbon_CreateBackup}" Command="{Binding CreateBackupCommand}" />
+              <Button Classes="command" views:ButtonIcon.Data="{StaticResource Icon.Folder}" Content="{x:Static l:Strings.Backup_OpenFolder}" Command="{Binding OpenBackupFolderCommand}"
+                      IsEnabled="{Binding LastBackupPath, Converter={x:Static ObjectConverters.IsNotNull}}" />
+            </StackPanel>
+          </StackPanel>
+          <Border Classes="ribbon-divider" />
+          <StackPanel Classes="ribbon-group">
+            <TextBlock Classes="ribbon-caption" Text="{x:Static l:Strings.Ribbon_Restore}" />
+            <StackPanel Orientation="Horizontal">
+              <Button Classes="command" views:ButtonIcon.Data="{StaticResource Icon.Import}" Content="{x:Static l:Strings.Ribbon_RestoreBackup}" Command="{Binding RestoreCommand}" />
+            </StackPanel>
           </StackPanel>
         </StackPanel>
-      </Border>
+      </ScrollViewer>
+    </Border>
 
-      <Border Classes="card">
-        <StackPanel>
-          <TextBlock Classes="h2" Text="{x:Static l:Strings.Backup_RestoreTitle}" />
-          <TextBlock Classes="muted" Text="{x:Static l:Strings.Backup_RestoreHint}" />
-          <StackPanel Classes="buttons">
-            <Button Content="{x:Static l:Strings.Backup_Restore}" Command="{Binding RestoreCommand}" IsEnabled="{Binding !IsBusy}" />
-            <Button Classes="accent" Content="{x:Static l:Strings.Backup_SwitchToRestored}" Command="{Binding SwitchToRestoredCommand}"
-                    IsVisible="{Binding Restored, Converter={x:Static ObjectConverters.IsNotNull}}" />
+    <ScrollViewer>
+      <StackPanel MaxWidth="720" HorizontalAlignment="Left">
+        <TextBlock Classes="h1" Text="{x:Static l:Strings.Nav_Backup}" />
+
+        <Border Classes="message error" IsVisible="{Binding ErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}">
+          <TextBlock Text="{Binding ErrorMessage}" TextWrapping="Wrap" />
+        </Border>
+        <Border Classes="message info" IsVisible="{Binding InfoMessage, Converter={x:Static ObjectConverters.IsNotNull}}">
+          <TextBlock Text="{Binding InfoMessage}" TextWrapping="Wrap" />
+        </Border>
+        <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" Margin="0,4" />
+
+        <Border Classes="card">
+          <StackPanel>
+            <TextBlock Classes="h2" Text="{x:Static l:Strings.Backup_CreateTitle}" />
+            <TextBlock Classes="muted" Text="{x:Static l:Strings.Backup_CreateHint}" />
           </StackPanel>
-        </StackPanel>
-      </Border>
+        </Border>
 
-      <TextBlock Classes="h2" Text="{x:Static l:Strings.Diag_Title}" />
-      <ItemsControl ItemsSource="{Binding Diagnostics}">
-        <ItemsControl.ItemTemplate>
-          <DataTemplate x:DataType="backup:DiagnosticItem">
-            <Grid ColumnDefinitions="180,*" Margin="0,2">
-              <TextBlock Classes="muted" Text="{Binding Label}" />
-              <SelectableTextBlock Grid.Column="1" Text="{Binding Value}" TextWrapping="Wrap" />
-            </Grid>
-          </DataTemplate>
-        </ItemsControl.ItemTemplate>
-      </ItemsControl>
-    </StackPanel>
-  </ScrollViewer>
+        <Border Classes="card">
+          <StackPanel>
+            <TextBlock Classes="h2" Text="{x:Static l:Strings.Backup_RestoreTitle}" />
+            <TextBlock Classes="muted" Text="{x:Static l:Strings.Backup_RestoreHint}" />
+            <StackPanel Classes="buttons" IsVisible="{Binding Restored, Converter={x:Static ObjectConverters.IsNotNull}}">
+              <Button Classes="accent" Content="{x:Static l:Strings.Backup_SwitchToRestored}" Command="{Binding SwitchToRestoredCommand}" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="card">
+          <StackPanel>
+            <TextBlock Classes="h2" Text="{x:Static l:Strings.Diag_Title}" />
+            <ItemsControl ItemsSource="{Binding Diagnostics}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="backup:DiagnosticItem">
+                  <Grid ColumnDefinitions="180,*" Margin="0,2">
+                    <TextBlock Classes="muted" Text="{Binding Label}" />
+                    <SelectableTextBlock Grid.Column="1" Text="{Binding Value}" TextWrapping="Wrap" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
 </UserControl>

@@ -55,14 +55,13 @@ jobs:
           merge-multiple: true
       - name: Validate packages, write checksums and manifest
         run: bash build/validate-release.sh release "${{ needs.validate.outputs.version }}" "$GITHUB_SHA"
-      - name: Create draft release
+      - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" \
             --repo "$GITHUB_REPOSITORY" \
             --verify-tag \
-            --draft \
             --title "EventPlanner ${{ needs.validate.outputs.version }}" \
             --notes "Unsigned build (no code-signing certificate). See README for first-launch instructions on Windows SmartScreen and macOS Gatekeeper. SHA256SUMS verifies integrity, not publisher identity." \
             release/EventPlanner-* release/SHA256SUMS release/release-manifest.json

@@ -69,7 +69,10 @@ public sealed class GuestService(IDataSessionFactory sessions, ILogger<GuestServ
 
         var group = ParticipantGroup.Create(Guid.CreateVersion7(), command.EventId, command.Label, contactName, email, phone, notes);
         session.Guests.AddGroup(group);
-        await session.SaveChangesAsync(cancellationToken);
+        if (await session.SaveChangesAsync(cancellationToken) == SaveOutcome.Conflict)
+        {
+            return OperationError.Conflict(GroupEntity);
+        }
         return group.ToDto();
     }
 
@@ -96,7 +99,10 @@ public sealed class GuestService(IDataSessionFactory sessions, ILogger<GuestServ
         }
 
         group.Update(command.Label, contactName, email, phone, notes);
-        await session.SaveChangesAsync(cancellationToken);
+        if (await session.SaveChangesAsync(cancellationToken) == SaveOutcome.Conflict)
+        {
+            return OperationError.Conflict(GroupEntity);
+        }
         return group.ToDto();
     }
 
@@ -165,7 +171,10 @@ public sealed class GuestService(IDataSessionFactory sessions, ILogger<GuestServ
             command.ProgramPartIds,
             privateNote);
         session.Guests.AddGuest(guest);
-        await session.SaveChangesAsync(cancellationToken);
+        if (await session.SaveChangesAsync(cancellationToken) == SaveOutcome.Conflict)
+        {
+            return OperationError.Conflict(GuestEntity);
+        }
         return Result<GuestDto>.Success(guest.ToDto(), warnings);
     }
 
