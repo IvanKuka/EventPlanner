@@ -1,2 +1,6 @@
-# Shell scripts run on macOS/Linux runners; CRLF would break their shebang regardless of local core.autocrlf.
+# LF everywhere, matching .editorconfig (end_of_line = lf): without this a Windows checkout with
+# core.autocrlf=true gets CRLF and `dotnet format --verify-no-changes` fails in CI.
+* text=auto eol=lf
+
+# Shell scripts run on macOS/Linux runners; CRLF would break their shebang.
 *.sh text eol=lf

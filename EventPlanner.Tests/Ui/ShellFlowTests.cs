@@ -166,7 +166,7 @@ public sealed class ShellFlowTests
         // An unparsable amount is a field error, nothing is saved.
         vendors.NewQuoteCommand.Execute(null);
         vendors.QuoteVendor = vendors.VendorOptions.Single(o => o.Label.StartsWith("Kvetinárstvo", StringComparison.Ordinal));
-        vendors.QuoteAmount = "12,345";
+        vendors.QuoteAmount = "12x5"; // not a number in any culture (CI runs in en-US, the app in sk-SK)
         await vendors.SaveQuoteCommand.ExecuteAsync(null);
         Assert.NotNull(vendors.Errors[nameof(QuoteDto.AmountMinor)]);
         Assert.Equal(2, vendors.Quotes.Count);
