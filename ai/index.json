@@ -1,0 +1,64 @@
+{
+  "version": 2,
+  "project": "EventPlanner",
+  "implementation_status": "stage-2-implemented",
+  "read_order": [
+    "README.md",
+    "STRUCTURE.md",
+    "ai/task-routing.md"
+  ],
+  "routes": {
+    "product": [
+      "ai/specs/00-decisions.md",
+      "ai/specs/01-product.md"
+    ],
+    "domain": [
+      "ai/specs/02-domain-data.md",
+      "ai/specs/03-processing.md",
+      "ai/knowledge/core-boundaries.md"
+    ],
+    "ui": [
+      "ai/specs/05-screens.md",
+      "ai/specs/10-shared-ui.md",
+      "ai/knowledge/desktop-infrastructure.md"
+    ],
+    "integrations": [
+      "ai/specs/04-interfaces-integrations.md"
+    ],
+    "storage": [
+      "ai/specs/09-storage-portability.md",
+      "ai/knowledge/desktop-infrastructure.md"
+    ],
+    "security": [
+      "ai/specs/11-security-privacy.md"
+    ],
+    "tests": [
+      "ai/specs/06-verification.md",
+      "ai/specs/12-quality-gates.md"
+    ],
+    "release": [
+      "ai/deployment/01-desktop-release.md"
+    ],
+    "vendors-budget": [
+      "ai/specs/02-domain-data.md",
+      "ai/specs/03-processing.md",
+      "ai/knowledge/core-boundaries.md"
+    ],
+    "roadmap": [
+      "ai/specs/07-roadmap-decisions.md",
+      "ai/specs/15-delivery-matrix.md"
+    ]
+  },
+  "modules": {
+    "Events": { "status": "implemented", "paths": ["EventPlanner.Core/Services/Events", "EventPlanner.Desktop/ViewModels/Events"] },
+    "Guests": { "status": "implemented", "paths": ["EventPlanner.Core/Services/Guests", "EventPlanner.Desktop/ViewModels/Guests"] },
+    "Storage": { "status": "implemented", "paths": ["EventPlanner.Infrastructure/Data", "EventPlanner.Infrastructure/Profiles", "EventPlanner.Infrastructure/Backup"] },
+    "Vendors": { "status": "implemented", "paths": ["EventPlanner.Core/Services/Vendors", "EventPlanner.Core/Models/Vendors", "EventPlanner.Desktop/ViewModels/Vendors"] },
+    "Budget": { "status": "implemented", "paths": ["EventPlanner.Core/Services/Budget", "EventPlanner.Core/Models/Budget", "EventPlanner.Desktop/ViewModels/Budget"] },
+    "Tasks": { "status": "planned" },
+    "Timeline": { "status": "planned" },
+    "Seating": { "status": "planned" },
+    "Exports": { "status": "planned" }
+  },
+  "source_paths_exist": true
+}

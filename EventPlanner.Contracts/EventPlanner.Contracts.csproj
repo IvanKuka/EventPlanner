@@ -1,0 +1,3 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Stable commands, results and transfer DTOs. No UI or persistence dependencies by design. -->
+</Project>

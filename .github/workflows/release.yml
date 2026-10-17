@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate tag
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - id: version
+        name: Check tag against project version
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Invalid tag: $tag" >&2; exit 1; }
+          version="${tag#v}"
+          project_version=$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' Directory.Build.props)
+          [[ "$version" == "$project_version" ]] || { echo "Tag $version does not match Directory.Build.props $project_version" >&2; exit 1; }
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Refuse to overwrite an existing release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME already exists; releases are immutable." >&2
+            exit 1
+          fi
+
+  build:
+    needs: validate
+    uses: ./.github/workflows/desktop-build.yml
+    with:
+      version: ${{ needs.validate.outputs.version }}
+
+  publish:
+    name: Publish release
+    needs: [validate, build]
+    runs-on: ubuntu-latest
+    # The only job allowed to write; it uses artifacts of this run only and waits for all three builds.
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: packages-*
+          path: release
+          merge-multiple: true
+      - name: Validate packages, write checksums and manifest
+        run: bash build/validate-release.sh release "${{ needs.validate.outputs.version }}" "$GITHUB_SHA"
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag \
+            --draft \
+            --title "EventPlanner ${{ needs.validate.outputs.version }}" \
+            --notes "Unsigned build (no code-signing certificate). See README for first-launch instructions on Windows SmartScreen and macOS Gatekeeper. SHA256SUMS verifies integrity, not publisher identity." \
+            release/EventPlanner-* release/SHA256SUMS release/release-manifest.json

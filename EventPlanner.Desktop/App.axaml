@@ -1,0 +1,58 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:events="using:EventPlanner.Desktop.ViewModels.Events"
+             xmlns:overview="using:EventPlanner.Desktop.ViewModels.Overview"
+             xmlns:guests="using:EventPlanner.Desktop.ViewModels.Guests"
+             xmlns:vendors="using:EventPlanner.Desktop.ViewModels.Vendors"
+             xmlns:budget="using:EventPlanner.Desktop.ViewModels.Budget"
+             xmlns:backup="using:EventPlanner.Desktop.ViewModels.Backup"
+             xmlns:views="using:EventPlanner.Desktop.Views"
+             x:Class="EventPlanner.Desktop.App"
+             RequestedThemeVariant="Default">
+
+  <!-- Explicit view mapping (no reflection-based view locator). -->
+  <Application.DataTemplates>
+    <DataTemplate DataType="events:EventsViewModel">
+      <views:EventsView />
+    </DataTemplate>
+    <DataTemplate DataType="overview:OverviewViewModel">
+      <views:OverviewView />
+    </DataTemplate>
+    <DataTemplate DataType="guests:GuestsViewModel">
+      <views:GuestsView />
+    </DataTemplate>
+    <DataTemplate DataType="vendors:VendorsViewModel">
+      <views:VendorsView />
+    </DataTemplate>
+    <DataTemplate DataType="budget:BudgetViewModel">
+      <views:BudgetView />
+    </DataTemplate>
+    <DataTemplate DataType="backup:BackupViewModel">
+      <views:BackupView />
+    </DataTemplate>
+  </Application.DataTemplates>
+
+  <!-- Own status colours per theme variant: Fluent's SystemFillColor*Brush did not resolve in the light
+       variant (verified by StatusColorTests). Light values keep >= 4.5:1 contrast on white for 12px text. -->
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="StatusErrorBrush" Color="#C42B1C" />
+          <SolidColorBrush x:Key="StatusNoticeBrush" Color="#8A4B00" />
+          <SolidColorBrush x:Key="StatusPositiveBrush" Color="#1E7A46" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="StatusErrorBrush" Color="#FF99A4" />
+          <SolidColorBrush x:Key="StatusNoticeBrush" Color="#FFB454" />
+          <SolidColorBrush x:Key="StatusPositiveBrush" Color="#6CCB8F" />
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme />
+    <StyleInclude Source="avares://EventPlanner/Styles/AppStyles.axaml" />
+  </Application.Styles>
+</Application>

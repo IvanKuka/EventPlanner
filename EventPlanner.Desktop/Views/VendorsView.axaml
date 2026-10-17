@@ -1,0 +1,245 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:EventPlanner.Desktop.ViewModels.Vendors"
+             xmlns:contracts="using:EventPlanner.Contracts.Vendors"
+             xmlns:l="using:EventPlanner.Desktop.Localization"
+             x:Class="EventPlanner.Desktop.Views.VendorsView"
+             x:DataType="vm:VendorsViewModel">
+
+  <Panel>
+    <StackPanel IsVisible="{Binding !HasProject}">
+      <TextBlock Classes="h1" Text="{x:Static l:Strings.Nav_Vendors}" />
+      <TextBlock Classes="muted" Text="{x:Static l:Strings.Common_SelectProjectFirst}" />
+    </StackPanel>
+
+    <DockPanel IsVisible="{Binding HasProject}">
+      <StackPanel DockPanel.Dock="Top">
+        <TextBlock Classes="h1" Text="{x:Static l:Strings.Nav_Vendors}" />
+        <Border Classes="message warning" IsVisible="{Binding IsReadOnly}">
+          <TextBlock Text="{x:Static l:Strings.Events_ArchivedReadOnly}" TextWrapping="Wrap" />
+        </Border>
+        <TextBlock Classes="muted" FontSize="12" Text="{x:Static l:Strings.Vendors_SelectionHint}" TextWrapping="Wrap" Margin="0,0,0,6" />
+      </StackPanel>
+
+      <Grid ColumnDefinitions="220,12,*,12,380">
+        <!-- Vendors -->
+        <DockPanel Grid.Column="0">
+          <TextBlock DockPanel.Dock="Top" Classes="h2" Text="{x:Static l:Strings.Vendors_VendorsTitle}" />
+          <Button DockPanel.Dock="Top" HorizontalAlignment="Stretch" Margin="0,0,0,6"
+                  Content="{x:Static l:Strings.Vendors_NewVendor}" Command="{Binding NewVendorCommand}" IsEnabled="{Binding !IsReadOnly}" />
+          <TextBlock DockPanel.Dock="Top" Classes="muted" Text="{x:Static l:Strings.Vendors_NoVendors}" IsVisible="{Binding !Vendors.Count}" TextWrapping="Wrap" />
+          <ListBox ItemsSource="{Binding Vendors}" SelectedItem="{Binding SelectedVendor}"
+                   AutomationProperties.Name="{x:Static l:Strings.Vendors_VendorsTitle}">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="contracts:VendorDto">
+                <StackPanel Margin="2,3">
+                  <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                  <TextBlock Classes="muted" FontSize="12" Text="{Binding Category}" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </DockPanel>
+
+        <!-- Comparison of one category -->
+        <DockPanel Grid.Column="2">
+          <StackPanel DockPanel.Dock="Top" Spacing="6">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+              <TextBlock Classes="h2" Text="{x:Static l:Strings.Vendors_ComparisonTitle}" VerticalAlignment="Center" Margin="0,0,8,0" />
+              <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}"
+                        PlaceholderText="{x:Static l:Strings.Vendors_Category}" AutomationProperties.Name="{x:Static l:Strings.Vendors_Category}" />
+              <Button Grid.Column="2" Margin="6,0,0,0" Classes="accent" Content="{x:Static l:Strings.Vendors_NewQuote}"
+                      Command="{Binding NewQuoteCommand}" IsEnabled="{Binding !IsReadOnly}" />
+            </Grid>
+            <Border Classes="message warning" IsVisible="{Binding ComparisonSummary, Converter={x:Static ObjectConverters.IsNotNull}}">
+              <TextBlock Text="{Binding ComparisonSummary}" TextWrapping="Wrap" />
+            </Border>
+          </StackPanel>
+          <TextBlock DockPanel.Dock="Top" Classes="muted" Text="{x:Static l:Strings.Vendors_NoQuotes}" IsVisible="{Binding !Quotes.Count}" Margin="0,8" />
+          <ListBox ItemsSource="{Binding Quotes}" SelectedItem="{Binding SelectedQuote}" AutomationProperties.Name="{x:Static l:Strings.Vendors_ComparisonTitle}">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:QuoteRow">
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" Margin="2,4">
+                  <StackPanel Orientation="Horizontal" Spacing="6">
+                    <TextBlock Text="{Binding VendorName}" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding Description}" Opacity="0.8" TextTrimming="CharacterEllipsis" />
+                  </StackPanel>
+                  <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right">
+                    <TextBlock Text="{x:Static l:Strings.Vendors_LowestBadge}" Classes="positive" IsVisible="{Binding IsLowest}" />
+                    <TextBlock Text="{Binding StatusText}" FontWeight="SemiBold" />
+                  </StackPanel>
+                  <WrapPanel Grid.Row="1" Grid.ColumnSpan="2">
+                    <TextBlock Text="{Binding AmountText}" Margin="0,0,12,0" />
+                    <TextBlock Text="{Binding TransportText}" Margin="0,0,12,0" />
+                    <TextBlock Text="{Binding TotalText, StringFormat={x:Static l:Strings.Vendors_TotalLabel}}" FontWeight="SemiBold" Margin="0,0,12,0" />
+                    <TextBlock Text="{Binding PeopleText}" Margin="0,0,12,0" />
+                    <TextBlock Text="{Binding ValidUntilText}" />
+                  </WrapPanel>
+                  <StackPanel Grid.Row="2" Grid.ColumnSpan="2">
+                    <TextBlock Classes="muted" FontSize="12" TextWrapping="Wrap"
+                               Text="{Binding ScopeText, StringFormat={x:Static l:Strings.Vendors_ScopeLabel}}" />
+                    <TextBlock Classes="muted" FontSize="12" TextWrapping="Wrap"
+                               Text="{Binding ExclusionsText, StringFormat={x:Static l:Strings.Vendors_ExclusionsLabel}}" />
+                  </StackPanel>
+                  <StackPanel Grid.Row="3" Grid.ColumnSpan="2">
+                    <TextBlock Classes="notice" Text="{Binding ForeignCurrencyText}" IsVisible="{Binding IsForeignCurrency}" />
+                    <TextBlock Classes="notice" Text="{Binding MissingText}"
+                               IsVisible="{Binding MissingText, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                  </StackPanel>
+                </Grid>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </DockPanel>
+
+        <!-- Detail -->
+        <ScrollViewer Grid.Column="4">
+          <StackPanel>
+            <Border Classes="message error" IsVisible="{Binding ErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}">
+              <TextBlock Text="{Binding ErrorMessage}" TextWrapping="Wrap" />
+            </Border>
+            <Border Classes="message warning" IsVisible="{Binding WarningMessage, Converter={x:Static ObjectConverters.IsNotNull}}">
+              <TextBlock Text="{Binding WarningMessage}" TextWrapping="Wrap" />
+            </Border>
+            <Border Classes="message info" IsVisible="{Binding InfoMessage, Converter={x:Static ObjectConverters.IsNotNull}}">
+              <TextBlock Text="{Binding InfoMessage}" TextWrapping="Wrap" />
+            </Border>
+
+            <TextBlock Classes="muted" Text="{x:Static l:Strings.Vendors_SelectHint}" TextWrapping="Wrap">
+              <TextBlock.IsVisible>
+                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                  <Binding Path="!IsEditingVendor" />
+                  <Binding Path="!IsEditingQuote" />
+                </MultiBinding>
+              </TextBlock.IsVisible>
+            </TextBlock>
+
+            <!-- Vendor editor -->
+            <Border Classes="card" IsVisible="{Binding IsEditingVendor}">
+              <StackPanel IsEnabled="{Binding !IsReadOnly}">
+                <TextBlock Classes="h2" Text="{x:Static l:Strings.Vendors_VendorDetail}" />
+                <TextBlock Classes="label" Text="{x:Static l:Strings.Vendors_Name}" />
+                <TextBox Text="{Binding VendorName}" MaxLength="120" AutomationProperties.Name="{x:Static l:Strings.Vendors_Name}" />
+                <TextBlock Classes="field-error" Text="{Binding Errors[Name]}" />
+                <TextBlock Classes="label" Text="{x:Static l:Strings.Vendors_Category}" />
+                <TextBox Text="{Binding VendorCategory}" MaxLength="120" AutomationProperties.Name="{x:Static l:Strings.Vendors_Category}" />
+                <TextBlock Classes="muted" FontSize="12" Text="{x:Static l:Strings.Vendors_CategoryHint}" TextWrapping="Wrap" />
+                <TextBlock Classes="field-error" Text="{Binding Errors[Category]}" />
+                <TextBlock Classes="label" Text="{x:Static l:Strings.Vendors_Contact}" />
+                <TextBox Text="{Binding VendorContact}" AcceptsReturn="True" TextWrapping="Wrap" AutomationProperties.Name="{x:Static l:Strings.Vendors_Contact}" />
+                <TextBlock Classes="field-error" Text="{Binding Errors[Contact]}" />
+                <TextBlock Classes="label" Text="{x:Static l:Strings.Vendors_Notes}" />
+                <TextBox Text="{Binding VendorNotes}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="48" AutomationProperties.Name="{x:Static l:Strings.Vendors_Notes}" />
+                <TextBlock Classes="field-error" Text="{Binding Errors[Notes]}" />
+                <TextBlock Classes="muted" FontSize="12" Text="{x:Static l:Strings.Guests_ContactHint}" TextWrapping="Wrap" />
+                <StackPanel Classes="buttons">
+                  <Button Classes="accent" Content="{x:Static l:Strings.Common_Save}" Command="{Binding SaveVendorCommand}" />
+                  <Button Content="{x:Static l:Strings.Vendors_DeleteVendor}" Command="{Binding DeleteVendorCommand}" IsVisible="{Binding !IsNewVendor}" />
+                </StackPanel>
+              </StackPanel>
+            </Border>
+
+            <!-- Quote editor and selection -->
+            <Border Classes="card" IsVisible="{Binding IsEditingQuote}">
+              <StackPanel IsEnabled="{Binding !IsReadOnly}">
+                <TextBlock Classes="h2" Text="{x:Static l:Strings.Vendors_QuoteDetail}" />
+                <TextBlock Classes="label" Text="{x:Static l:Strings.Vendors_QuoteVendor}" />
+                <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding VendorOptions}" SelectedItem="{Binding QuoteVendor}"
+                          IsEnabled="{Binding SelectedQuote, Converter={x:Static ObjectConverters.IsNull}}"
+                          AutomationProperties.Name="{x:Static l:Strings.Vendors_QuoteVendor}" />
+                <TextBlock Classes="field-error" Text="{Binding Errors[VendorId]}" />
+                <TextBlock Classes="label" Text="{x:Static l:Strings.Vendors_Description}" />
+                <TextBox Text="{Binding QuoteDescription}" MaxLength="120" AutomationProperties.Name="{x:Static l:Strings.Vendors_Description}" />
+                <TextBlock Classes="field-error" Text="{Binding Errors[Description]}" />
+                <Grid ColumnDefinitions="*,8,90">
+                  <StackPanel>
+                    <TextBlock Classes="label" Text="{x:Static l:Strings.Vendors_Amount}" />
+                    <TextBox Text="{Binding QuoteAmount}" AutomationProperties.Name="{x:Static l:Strings.Vendors_Amount}" />
+                    <TextBlock Classes="field-error" Text="{Binding Errors[AmountMinor]}" />
+                  </StackPanel>
+                  <StackPanel Grid.Column="2">
+                    <TextBlock Classes="label" Text="{x:Static l:Strings.Common_Currency}" />
+                    <TextBox Text="{Binding QuoteCurrency}" MaxLength="3" AutomationProperties.Name="{x:Static l:Strings.Common_Currency}" />
+                    <TextBlock Classes="field-error" Text="{Binding Errors[Currency]}" />
+                  </StackPanel>
+                </Grid>
+                <TextBlock Classes="label" Text="{x:Static l:Strings.Vendors_Transport}" />
+                <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding TransportOptions}" SelectedItem="{Binding QuoteTransport}"
+                          AutomationProperties.Name="{x:Static l:Strings.Vendors_Transport}" />
+                <StackPanel IsVisible="{Binding IsTransportSeparate}">
+                  <TextBlock Classes="label" Text="{x:Static l:Strings.Vendors_TransportAmount}" />
+                  <TextBox Text="{Binding QuoteTransportAmount}" AutomationProperties.Name="{x:Static l:Strings.Vendors_TransportAmount}" />
+                  <TextBlock Classes="muted" FontSize="12" Text="{x:Static l:Strings.Vendors_UnknownHint}" TextWrapping="Wrap" />
+                  <TextBlock Classes="field-error" Text="{Binding Errors[TransportMinor]}" />
+                </StackPanel>
+                <TextBlock Classes="label" Text="{x:Static l:Strings.Vendors_PeopleCountLabel}" />
+                <TextBox Text="{Binding QuotePeopleCount}" AutomationProperties.Name="{x:Static l:Strings.Vendors_PeopleCountLabel}" />
+                <TextBlock Classes="field-error" Text="{Binding Errors[PeopleCount]}" />
+                <TextBlock Classes="label" Text="{x:Static l:Strings.Vendors_Scope}" />
+                <TextBox Text="{Binding QuoteScope}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="48" AutomationProperties.Name="{x:Static l:Strings.Vendors_Scope}" />
+                <TextBlock Classes="field-error" Text="{Binding Errors[ScopeText]}" />
+                <TextBlock Classes="label" Text="{x:Static l:Strings.Vendors_Exclusions}" />
+                <TextBox Text="{Binding QuoteExclusions}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="48" AutomationProperties.Name="{x:Static l:Strings.Vendors_Exclusions}" />
+                <TextBlock Classes="muted" FontSize="12" Text="{x:Static l:Strings.Vendors_UnknownHint}" TextWrapping="Wrap" />
+                <TextBlock Classes="field-error" Text="{Binding Errors[ExclusionsText]}" />
+                <TextBlock Classes="label" Text="{x:Static l:Strings.Vendors_ValidUntilLabel}" />
+                <CalendarDatePicker SelectedDate="{Binding QuoteValidUntil}" HorizontalAlignment="Stretch"
+                                    AutomationProperties.Name="{x:Static l:Strings.Vendors_ValidUntilLabel}" />
+                <StackPanel Classes="buttons">
+                  <Button Classes="accent" Content="{x:Static l:Strings.Common_Save}" Command="{Binding SaveQuoteCommand}" />
+                  <Button Content="{x:Static l:Strings.Common_Delete}" Command="{Binding DeleteQuoteCommand}"
+                          IsVisible="{Binding SelectedQuote, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                </StackPanel>
+
+                <StackPanel IsVisible="{Binding CanSelectQuote}" Margin="0,12,0,0">
+                  <TextBlock Classes="h2" Text="{x:Static l:Strings.Vendors_SelectTitle}" />
+                  <TextBlock Classes="muted" FontSize="12" Text="{x:Static l:Strings.Vendors_SelectionHint}" TextWrapping="Wrap" />
+                  <TextBlock Classes="label" Text="{x:Static l:Strings.Vendors_BudgetImpact}" />
+                  <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding PolicyOptions}" SelectedItem="{Binding SelectionPolicy}"
+                            AutomationProperties.Name="{x:Static l:Strings.Vendors_BudgetImpact}" />
+                  <StackPanel IsVisible="{Binding IsUpdatePolicy}">
+                    <TextBlock Classes="label" Text="{x:Static l:Strings.Vendors_BudgetItem}" />
+                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding BudgetItemOptions}" SelectedItem="{Binding SelectionBudgetItem}"
+                              AutomationProperties.Name="{x:Static l:Strings.Vendors_BudgetItem}" />
+                    <TextBlock Classes="field-error" Text="{Binding Errors[BudgetItemId]}" />
+                  </StackPanel>
+                  <TextBlock Classes="label" Text="{x:Static l:Strings.Vendors_DecisionNote}" />
+                  <TextBox Text="{Binding DecisionNote}" AcceptsReturn="True" TextWrapping="Wrap" MaxLength="2000"
+                           AutomationProperties.Name="{x:Static l:Strings.Vendors_DecisionNote}" />
+                  <TextBlock Classes="field-error" Text="{Binding Errors[Note]}" />
+                  <StackPanel Classes="buttons">
+                    <Button Classes="accent" Content="{x:Static l:Strings.Vendors_SelectQuote}" Command="{Binding SelectQuoteCommand}" />
+                    <Button Content="{x:Static l:Strings.Vendors_Decline}" Command="{Binding DeclineQuoteCommand}" />
+                  </StackPanel>
+                </StackPanel>
+              </StackPanel>
+            </Border>
+
+            <!-- Decision history of the open vendor -->
+            <Border Classes="card" IsVisible="{Binding ShowDecisions}">
+              <StackPanel>
+                <TextBlock Classes="h2" Text="{x:Static l:Strings.Vendors_DecisionHistory}" />
+                <TextBlock Classes="muted" FontSize="12" Text="{x:Static l:Strings.Vendors_DecisionHistoryHint}" />
+                <TextBlock Classes="muted" Text="{x:Static l:Strings.Vendors_NoDecisions}" IsVisible="{Binding !Decisions.Count}" Margin="0,6,0,0" />
+                <ItemsControl ItemsSource="{Binding Decisions}" AutomationProperties.Name="{x:Static l:Strings.Vendors_DecisionHistory}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:QuoteDecisionRow">
+                      <StackPanel Margin="0,6,0,0">
+                        <TextBlock Text="{Binding HeaderText}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                        <TextBlock FontSize="12" Text="{Binding PriceText}" TextWrapping="Wrap" />
+                        <TextBlock Classes="muted" FontSize="12" Text="{Binding BudgetImpactText}"
+                                   IsVisible="{Binding BudgetImpactText, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                        <TextBlock Classes="muted" FontSize="12" Text="{Binding Note}"
+                                   IsVisible="{Binding Note, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                      </StackPanel>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </Border>
+          </StackPanel>
+        </ScrollViewer>
+      </Grid>
+    </DockPanel>
+  </Panel>
+</UserControl>

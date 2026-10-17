@@ -1,0 +1,72 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <Style Selector="TextBlock.h1">
+    <Setter Property="FontSize" Value="22" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Margin" Value="0,0,0,12" />
+  </Style>
+
+  <Style Selector="TextBlock.h2">
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Margin" Value="0,12,0,6" />
+  </Style>
+
+  <Style Selector="TextBlock.label">
+    <Setter Property="Margin" Value="0,8,0,2" />
+  </Style>
+
+  <Style Selector="TextBlock.muted">
+    <Setter Property="Opacity" Value="0.7" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+
+  <!-- State is always conveyed with text too, never by colour alone. -->
+  <Style Selector="TextBlock.field-error">
+    <Setter Property="Foreground" Value="{DynamicResource StatusErrorBrush}" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+    <Setter Property="FontSize" Value="12" />
+    <!-- Empty error lines must not leave gaps between fields. -->
+    <Setter Property="IsVisible" Value="{Binding $self.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+  </Style>
+
+  <!-- Inline notice for incomplete or not comparable figures (missing data, other currency, overpayment). -->
+  <Style Selector="TextBlock.notice">
+    <Setter Property="Foreground" Value="{DynamicResource StatusNoticeBrush}" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+    <Setter Property="FontSize" Value="12" />
+  </Style>
+
+  <Style Selector="TextBlock.positive">
+    <Setter Property="Foreground" Value="{DynamicResource StatusPositiveBrush}" />
+  </Style>
+
+  <Style Selector="Border.message">
+    <Setter Property="Padding" Value="10,6" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="Margin" Value="0,6" />
+  </Style>
+  <Style Selector="Border.message.error">
+    <Setter Property="Background" Value="#33D13438" />
+  </Style>
+  <Style Selector="Border.message.info">
+    <Setter Property="Background" Value="#3310893E" />
+  </Style>
+  <Style Selector="Border.message.warning">
+    <Setter Property="Background" Value="#33F7B500" />
+  </Style>
+
+  <Style Selector="Border.card">
+    <Setter Property="Background" Value="#14808080" />
+    <Setter Property="CornerRadius" Value="6" />
+    <Setter Property="Padding" Value="12" />
+    <Setter Property="Margin" Value="0,0,0,12" />
+  </Style>
+
+  <Style Selector="StackPanel.buttons">
+    <Setter Property="Orientation" Value="Horizontal" />
+    <Setter Property="Spacing" Value="8" />
+    <Setter Property="Margin" Value="0,12,0,0" />
+  </Style>
+</Styles>

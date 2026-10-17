@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Domain rules and application services. Must not depend on Avalonia, EF Core or the filesystem. -->
+  <ItemGroup>
+    <ProjectReference Include="..\EventPlanner.Contracts\EventPlanner.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="EventPlanner.Tests" />
+  </ItemGroup>
+</Project>

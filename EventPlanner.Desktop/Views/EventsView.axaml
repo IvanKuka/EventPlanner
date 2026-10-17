@@ -1,0 +1,154 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:events="using:EventPlanner.Desktop.ViewModels.Events"
+             xmlns:contracts="using:EventPlanner.Contracts.Events"
+             xmlns:l="using:EventPlanner.Desktop.Localization"
+             x:Class="EventPlanner.Desktop.Views.EventsView"
+             x:DataType="events:EventsViewModel">
+
+  <Grid ColumnDefinitions="260,16,*">
+    <!-- Project list -->
+    <DockPanel Grid.Column="0">
+      <TextBlock DockPanel.Dock="Top" Classes="h1" Text="{x:Static l:Strings.Nav_Projects}" />
+      <Button DockPanel.Dock="Top" Classes="accent" HorizontalAlignment="Stretch" Margin="0,0,0,8"
+              Content="{x:Static l:Strings.Events_New}" Command="{Binding NewProjectCommand}" />
+      <TextBlock DockPanel.Dock="Top" Classes="muted" Text="{x:Static l:Strings.Events_Empty}"
+                 IsVisible="{Binding !Projects.Count}" />
+      <ListBox ItemsSource="{Binding Projects}" SelectedItem="{Binding SelectedProject}"
+               AutomationProperties.Name="{x:Static l:Strings.Nav_Projects}">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="contracts:EventSummaryDto">
+            <StackPanel Margin="2,4">
+              <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+              <TextBlock Text="{Binding LocalStartDate}" Classes="muted" FontSize="12" />
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </DockPanel>
+
+    <!-- Editor -->
+    <ScrollViewer Grid.Column="2">
+      <StackPanel MaxWidth="640" HorizontalAlignment="Left">
+        <TextBlock Classes="h1" Text="{x:Static l:Strings.Events_NewTitle}" IsVisible="{Binding IsNew}" />
+        <TextBlock Classes="h1" Text="{Binding Name}" IsVisible="{Binding IsExisting}" />
+
+        <Border Classes="message warning" IsVisible="{Binding IsReadOnly}">
+          <TextBlock Text="{x:Static l:Strings.Events_ArchivedReadOnly}" TextWrapping="Wrap" />
+        </Border>
+        <Border Classes="message error" IsVisible="{Binding ErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}">
+          <TextBlock Text="{Binding ErrorMessage}" TextWrapping="Wrap" />
+        </Border>
+        <Border Classes="message info" IsVisible="{Binding InfoMessage, Converter={x:Static ObjectConverters.IsNotNull}}">
+          <TextBlock Text="{Binding InfoMessage}" TextWrapping="Wrap" />
+        </Border>
+
+        <Border Classes="card">
+          <StackPanel IsEnabled="{Binding !IsReadOnly}">
+            <TextBlock Classes="label" Text="{x:Static l:Strings.Events_Name}" />
+            <TextBox Text="{Binding Name}" MaxLength="120" AutomationProperties.Name="{x:Static l:Strings.Events_Name}" />
+            <TextBlock Classes="field-error" Text="{Binding Errors[Name]}" />
+
+            <TextBlock Classes="label" Text="{x:Static l:Strings.Events_Type}" />
+            <ComboBox ItemsSource="{Binding EventTypeOptions}" SelectedItem="{Binding SelectedEventType}"
+                      HorizontalAlignment="Stretch" AutomationProperties.Name="{x:Static l:Strings.Events_Type}" />
+
+            <StackPanel IsVisible="{Binding IsNew}">
+              <TextBlock Classes="label" Text="{x:Static l:Strings.Events_Template}" />
+              <ComboBox ItemsSource="{Binding TemplateOptions}" SelectedItem="{Binding SelectedTemplate}"
+                        HorizontalAlignment="Stretch" AutomationProperties.Name="{x:Static l:Strings.Events_Template}" />
+              <TextBlock Classes="muted" FontSize="12" Text="{x:Static l:Strings.Events_TemplateHint}" />
+            </StackPanel>
+
+            <Grid ColumnDefinitions="*,12,*">
+              <StackPanel Grid.Column="0">
+                <TextBlock Classes="label" Text="{x:Static l:Strings.Events_StartDate}" />
+                <CalendarDatePicker SelectedDate="{Binding StartDate}" HorizontalAlignment="Stretch"
+                                    AutomationProperties.Name="{x:Static l:Strings.Events_StartDate}" />
+                <TextBlock Classes="field-error" Text="{Binding Errors[LocalStartDate]}" />
+              </StackPanel>
+              <StackPanel Grid.Column="2">
+                <TextBlock Classes="label" Text="{x:Static l:Strings.Events_EndDate}" />
+                <CalendarDatePicker SelectedDate="{Binding EndDate}" HorizontalAlignment="Stretch"
+                                    AutomationProperties.Name="{x:Static l:Strings.Events_EndDate}" />
+                <TextBlock Classes="field-error" Text="{Binding Errors[LocalEndDate]}" />
+              </StackPanel>
+            </Grid>
+
+            <TextBlock Classes="label" Text="{x:Static l:Strings.Events_TimeZone}" />
+            <AutoCompleteBox Text="{Binding TimeZoneId}" ItemsSource="{Binding TimeZones}" FilterMode="ContainsOrdinal"
+                             AutomationProperties.Name="{x:Static l:Strings.Events_TimeZone}" />
+            <TextBlock Classes="muted" FontSize="12" Text="{x:Static l:Strings.Events_TimeZoneHint}" />
+            <TextBlock Classes="field-error" Text="{Binding Errors[TimeZoneId]}" />
+
+            <TextBlock Classes="label" Text="{x:Static l:Strings.Events_Venue}" />
+            <TextBox Text="{Binding VenueText}" AutomationProperties.Name="{x:Static l:Strings.Events_Venue}" />
+            <TextBlock Classes="field-error" Text="{Binding Errors[VenueText]}" />
+
+            <TextBlock Classes="label" Text="{x:Static l:Strings.Events_Currency}" />
+            <TextBox Text="{Binding Currency}" MaxLength="3" Width="100" HorizontalAlignment="Left"
+                     AutomationProperties.Name="{x:Static l:Strings.Events_Currency}" />
+            <TextBlock Classes="field-error" Text="{Binding Errors[Currency]}" />
+
+            <StackPanel Classes="buttons">
+              <Button Classes="accent" Content="{x:Static l:Strings.Common_Save}" Command="{Binding SaveCommand}" IsEnabled="{Binding !IsBusy}" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+
+        <!-- Lifecycle -->
+        <Border Classes="card" IsVisible="{Binding IsExisting}">
+          <StackPanel>
+            <TextBlock Classes="h2" Text="{x:Static l:Strings.Events_Status}" />
+            <TextBlock Text="{Binding StatusText}" FontWeight="SemiBold" />
+            <CheckBox Content="{x:Static l:Strings.Events_ReadyChecklist}" IsChecked="{Binding ReadyChecklistConfirmed}" Margin="0,8,0,0" />
+            <TextBlock Classes="field-error" Text="{Binding Errors[ChecklistConfirmed]}" />
+            <ItemsControl ItemsSource="{Binding NextStatuses}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="events:StatusTransition">
+                  <Button Content="{Binding ButtonText}"
+                          Command="{Binding $parent[ItemsControl].((events:EventsViewModel)DataContext).ChangeStatusCommand}"
+                          CommandParameter="{Binding}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+
+        <!-- Program parts -->
+        <Border Classes="card" IsVisible="{Binding IsExisting}">
+          <StackPanel IsEnabled="{Binding !IsReadOnly}">
+            <TextBlock Classes="h2" Text="{x:Static l:Strings.Events_ProgramParts}" />
+            <TextBlock Classes="muted" Text="{x:Static l:Strings.Events_ProgramPartsHint}" />
+            <ItemsControl ItemsSource="{Binding ProgramParts}" Margin="0,8,0,0">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="events:ProgramPartItem">
+                  <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,2">
+                    <TextBox Grid.Column="0" Text="{Binding Label}" AutomationProperties.Name="{x:Static l:Strings.Events_ProgramPartLabel}" />
+                    <Button Grid.Column="1" Margin="6,0,0,0" Content="{x:Static l:Strings.Common_Rename}"
+                            Command="{Binding $parent[ItemsControl].((events:EventsViewModel)DataContext).RenamePartCommand}"
+                            CommandParameter="{Binding}" />
+                    <Button Grid.Column="2" Margin="6,0,0,0" Content="{x:Static l:Strings.Common_Remove}"
+                            Command="{Binding $parent[ItemsControl].((events:EventsViewModel)DataContext).RemovePartCommand}"
+                            CommandParameter="{Binding}" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Grid ColumnDefinitions="*,Auto" Margin="0,8,0,0">
+              <TextBox Grid.Column="0" Text="{Binding NewPartLabel}" PlaceholderText="{x:Static l:Strings.Events_NewPartWatermark}"
+                       AutomationProperties.Name="{x:Static l:Strings.Events_NewPartWatermark}" />
+              <Button Grid.Column="1" Margin="6,0,0,0" Content="{x:Static l:Strings.Common_Add}" Command="{Binding AddPartCommand}" />
+            </Grid>
+            <TextBlock Classes="field-error" Text="{Binding Errors[Label]}" />
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

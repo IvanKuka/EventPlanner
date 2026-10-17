@@ -1,0 +1,18 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- Locked restore keeps transitive versions reproducible across the three RIDs. -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <Company>EventPlanner</Company>
+    <Product>EventPlanner</Product>
+    <Version>0.1.0</Version>
+    <NeutralLanguage>sk</NeutralLanguage>
+  </PropertyGroup>
+</Project>

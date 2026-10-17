@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- Shell and startup -->
+  <data name="App_Title" xml:space="preserve"><value>Plánovač podujatí</value></data>
+  <data name="Nav_Label" xml:space="preserve"><value>Navigácia</value></data>
+  <data name="Nav_Projects" xml:space="preserve"><value>Projekty</value></data>
+  <data name="Nav_Overview" xml:space="preserve"><value>Prehľad</value></data>
+  <data name="Nav_Guests" xml:space="preserve"><value>Hostia</value></data>
+  <data name="Nav_Backup" xml:space="preserve"><value>Záloha a obnova</value></data>
+  <data name="Shell_NoProject" xml:space="preserve"><value>Žiadny vybraný projekt</value></data>
+  <data name="Status_ProfileLabel" xml:space="preserve"><value>Profil:</value></data>
+  <data name="Startup_Loading" xml:space="preserve"><value>Otvára sa profil…</value></data>
+  <data name="Startup_FailedTitle" xml:space="preserve"><value>Profil sa nepodarilo otvoriť</value></data>
+  <data name="Startup_Locked" xml:space="preserve"><value>Tento profil už používa iné spustené okno aplikácie. Zavrite ho a spustite aplikáciu znova. Dáta neboli zmenené.</value></data>
+  <data name="Startup_NewerSchema" xml:space="preserve"><value>Tento profil vytvorila novšia verzia aplikácie. Dáta zostali nedotknuté. Nainštalujte novšiu verziu alebo obnovte inú zálohu.</value></data>
+  <data name="Startup_InsufficientSpace" xml:space="preserve"><value>Na disku nie je dosť miesta na bezpečnú zálohu pred aktualizáciou dát. Uvoľnite miesto a spustite aplikáciu znova.</value></data>
+  <data name="Startup_Corrupt" xml:space="preserve"><value>Kontrola integrity profilu zlyhala, preto sa neotvoril na zápis. Dáta neboli zmenené. Môžete obnoviť profil zo zálohy.</value></data>
+  <data name="Startup_Io" xml:space="preserve"><value>Dátový priečinok aplikácie nie je dostupný alebo nemá oprávnenia na zápis.</value></data>
+  <data name="Startup_RecoverFromBackup" xml:space="preserve"><value>Obnoviť zo zálohy…</value></data>
+  <data name="Startup_Exit" xml:space="preserve"><value>Ukončiť</value></data>
+
+  <!-- Common -->
+  <data name="Common_Save" xml:space="preserve"><value>Uložiť</value></data>
+  <data name="Common_Add" xml:space="preserve"><value>Pridať</value></data>
+  <data name="Common_Rename" xml:space="preserve"><value>Premenovať</value></data>
+  <data name="Common_Remove" xml:space="preserve"><value>Odstrániť</value></data>
+  <data name="Common_Delete" xml:space="preserve"><value>Zmazať</value></data>
+  <data name="Common_YesDelete" xml:space="preserve"><value>Áno, zmazať</value></data>
+  <data name="Common_Cancel" xml:space="preserve"><value>Zrušiť</value></data>
+  <data name="Common_SelectProjectFirst" xml:space="preserve"><value>Najprv vyberte alebo vytvorte projekt v časti Projekty.</value></data>
+  <data name="Info_Saved" xml:space="preserve"><value>Uložené.</value></data>
+  <data name="Info_Deleted" xml:space="preserve"><value>Zmazané.</value></data>
+  <data name="Info_PartRemoved" xml:space="preserve"><value>Časť programu bola odstránená aj z výberu hostí.</value></data>
+  <data name="Info_StatusChanged" xml:space="preserve"><value>Stav projektu: {0}.</value></data>
+
+  <!-- Errors -->
+  <data name="Error_ValidationFailed" xml:space="preserve"><value>Skontrolujte označené polia.</value></data>
+  <data name="Error_Conflict" xml:space="preserve"><value>Záznam medzitým zmenila iná operácia. Načítajte ho znova a zopakujte úpravu.</value></data>
+  <data name="Error_NotFound" xml:space="preserve"><value>Záznam už neexistuje.</value></data>
+  <data name="Error_ReadOnly" xml:space="preserve"><value>Projekt je archivovaný a len na čítanie. Najprv ho odomknite zmenou stavu.</value></data>
+  <data name="Error_MissingSource" xml:space="preserve"><value>Súbor chýba alebo je neúplný.</value></data>
+  <data name="Error_UnsupportedInput" xml:space="preserve"><value>Súbor nemá očakávaný obsah zálohy tejto aplikácie.</value></data>
+  <data name="Error_PermissionDenied" xml:space="preserve"><value>Do vybraného umiestnenia nie je možné zapisovať. Vyberte iný priečinok.</value></data>
+  <data name="Error_InsufficientSpace" xml:space="preserve"><value>Nedostatok miesta na disku. Uvoľnite miesto alebo vyberte iný disk.</value></data>
+  <data name="Error_CorruptData" xml:space="preserve"><value>Dáta sú poškodené alebo nezodpovedajú kontrolnému súčtu. Nič nebolo zmenené.</value></data>
+  <data name="Error_UnsupportedVersion" xml:space="preserve"><value>Súbor vytvorila nepodporovaná (novšia) verzia aplikácie. Nič nebolo zmenené.</value></data>
+  <data name="Error_Cancelled" xml:space="preserve"><value>Operácia bola zrušená.</value></data>
+  <data name="Error_Unexpected" xml:space="preserve"><value>Operácia zlyhala.</value></data>
+
+  <!-- Validation -->
+  <data name="Validation_Required" xml:space="preserve"><value>Povinné pole.</value></data>
+  <data name="Validation_TooLong" xml:space="preserve"><value>Text je príliš dlhý.</value></data>
+  <data name="Validation_InvalidCharacters" xml:space="preserve"><value>Text obsahuje nepovolené riadiace znaky.</value></data>
+  <data name="Validation_InvalidTimeZone" xml:space="preserve"><value>Zadajte časovú zónu v tvare Oblasť/Mesto, napr. Europe/Bratislava.</value></data>
+  <data name="Validation_InvalidCurrency" xml:space="preserve"><value>Zadajte trojpísmenový kód meny, napr. EUR.</value></data>
+  <data name="Validation_EndBeforeStart" xml:space="preserve"><value>Koniec nemôže byť pred začiatkom.</value></data>
+  <data name="Validation_InvalidTransition" xml:space="preserve"><value>Do tohto stavu nie je možné prejsť.</value></data>
+  <data name="Validation_ConfirmationRequired" xml:space="preserve"><value>Potvrďte kontrolný zoznam pred označením projektu ako pripraveného.</value></data>
+  <data name="Validation_UnknownReference" xml:space="preserve"><value>Vybraná položka nepatrí do tohto projektu.</value></data>
+  <data name="Validation_NotInGroup" xml:space="preserve"><value>Hosť nie je členom skupiny.</value></data>
+  <data name="Validation_InvalidValue" xml:space="preserve"><value>Neplatná hodnota.</value></data>
+  <data name="Warning_DuplicateGuestName" xml:space="preserve"><value>Hosť s rovnakým menom už existuje. Ak ide o inú osobu, je to v poriadku.</value></data>
+
+  <!-- Domain labels -->
+  <data name="Status_Draft" xml:space="preserve"><value>Koncept</value></data>
+  <data name="Status_Planning" xml:space="preserve"><value>Plánovanie</value></data>
+  <data name="Status_Ready" xml:space="preserve"><value>Pripravené</value></data>
+  <data name="Status_Completed" xml:space="preserve"><value>Dokončené</value></data>
+  <data name="Status_Archived" xml:space="preserve"><value>Archivované</value></data>
+  <data name="EventType_Wedding" xml:space="preserve"><value>Svadba</value></data>
+  <data name="EventType_Celebration" xml:space="preserve"><value>Oslava</value></data>
+  <data name="EventType_Tournament" xml:space="preserve"><value>Turnaj</value></data>
+  <data name="EventType_Other" xml:space="preserve"><value>Iné</value></data>
+  <data name="Template_Blank" xml:space="preserve"><value>Bez šablóny</value></data>
+  <data name="Template_Wedding" xml:space="preserve"><value>Svadba</value></data>
+  <data name="Template_Celebration" xml:space="preserve"><value>Oslava</value></data>
+  <data name="Rsvp_Unknown" xml:space="preserve"><value>Neznáme</value></data>
+  <data name="Rsvp_Invited" xml:space="preserve"><value>Pozvaný</value></data>
+  <data name="Rsvp_Accepted" xml:space="preserve"><value>Potvrdil</value></data>
+  <data name="Rsvp_Declined" xml:space="preserve"><value>Odmietol</value></data>
+  <data name="Rsvp_Tentative" xml:space="preserve"><value>Možno</value></data>
+  <data name="GuestKind_Named" xml:space="preserve"><value>Konkrétna osoba</value></data>
+  <data name="GuestKind_PlusOnePlaceholder" xml:space="preserve"><value>Miesto pre sprievod (bez mena)</value></data>
+
+  <!-- Projects -->
+  <data name="Events_New" xml:space="preserve"><value>Nový projekt</value></data>
+  <data name="Events_NewTitle" xml:space="preserve"><value>Nový projekt</value></data>
+  <data name="Events_Empty" xml:space="preserve"><value>Zatiaľ nemáte žiadny projekt.</value></data>
+  <data name="Events_Name" xml:space="preserve"><value>Názov</value></data>
+  <data name="Events_Type" xml:space="preserve"><value>Typ podujatia</value></data>
+  <data name="Events_Template" xml:space="preserve"><value>Štartovacia šablóna</value></data>
+  <data name="Events_TemplateHint" xml:space="preserve"><value>Šablóna len predvyplní časti programu, ktoré môžete upraviť. Nenastavuje termíny, počty ani dodávateľov.</value></data>
+  <data name="Events_StartDate" xml:space="preserve"><value>Začiatok</value></data>
+  <data name="Events_EndDate" xml:space="preserve"><value>Koniec</value></data>
+  <data name="Events_TimeZone" xml:space="preserve"><value>Časová zóna podujatia</value></data>
+  <data name="Events_TimeZoneHint" xml:space="preserve"><value>Všetky časy projektu sa zobrazujú v tejto zóne, aj keď pracujete na počítači v inej.</value></data>
+  <data name="Events_Venue" xml:space="preserve"><value>Miesto</value></data>
+  <data name="Events_Currency" xml:space="preserve"><value>Mena</value></data>
+  <data name="Events_Status" xml:space="preserve"><value>Stav projektu</value></data>
+  <data name="Events_ReadyChecklist" xml:space="preserve"><value>Prešiel(a) som kontrolný zoznam (potrebné pre stav Pripravené)</value></data>
+  <data name="Events_MoveTo" xml:space="preserve"><value>Prejsť do: {0}</value></data>
+  <data name="Events_ArchivedReadOnly" xml:space="preserve"><value>Projekt je archivovaný a len na čítanie. Na úpravy ho odomknite zmenou stavu na Dokončené.</value></data>
+  <data name="Events_ProgramParts" xml:space="preserve"><value>Časti programu</value></data>
+  <data name="Events_ProgramPartsHint" xml:space="preserve"><value>Hostia sa počítajú len do častí, ktoré majú výslovne vybrané (napr. obrad, hostina).</value></data>
+  <data name="Events_ProgramPartLabel" xml:space="preserve"><value>Názov časti programu</value></data>
+  <data name="Events_NewPartWatermark" xml:space="preserve"><value>Nová časť programu</value></data>
+
+  <!-- Overview -->
+  <data name="Overview_DateSingle" xml:space="preserve"><value>{0:d} · časová zóna {1}</value></data>
+  <data name="Overview_DateRange" xml:space="preserve"><value>{0:d} – {1:d} · časová zóna {2}</value></data>
+  <data name="Overview_TotalGuests" xml:space="preserve"><value>Hostí v zozname: {0}</value></data>
+  <data name="Overview_CountsTitle" xml:space="preserve"><value>Počty podľa častí programu</value></data>
+  <data name="Overview_CountsHint" xml:space="preserve"><value>Počty sa počítajú zo záznamov hostí. „Neznáme / pozvaní“ sú hostia bez odpovede.</value></data>
+  <data name="Overview_AwaitingAnswer" xml:space="preserve"><value>Neznáme / pozvaní</value></data>
+  <data name="Overview_IssuesTitle" xml:space="preserve"><value>Na doriešenie</value></data>
+  <data name="Overview_NoIssues" xml:space="preserve"><value>Žiadne zistené otvorené body v hosťoch ani v rozpočte.</value></data>
+  <data name="Overview_IssueNoProgramParts" xml:space="preserve"><value>Projekt nemá žiadne časti programu, preto sa nedajú počítať účasti.</value></data>
+  <data name="Overview_IssueGuestsWithoutPart" xml:space="preserve"><value>Hostia bez vybranej časti programu: {0}</value></data>
+  <data name="Overview_IssuePendingAnswers" xml:space="preserve"><value>Hostia bez odpovede: {0}</value></data>
+
+  <!-- Guests -->
+  <data name="Guests_Groups" xml:space="preserve"><value>Skupiny</value></data>
+  <data name="Guests_NewGroup" xml:space="preserve"><value>Nová skupina</value></data>
+  <data name="Guests_NoGroups" xml:space="preserve"><value>Žiadne skupiny.</value></data>
+  <data name="Guests_NewGuest" xml:space="preserve"><value>Nový hosť</value></data>
+  <data name="Guests_SearchWatermark" xml:space="preserve"><value>Hľadať meno alebo kontakt skupiny</value></data>
+  <data name="Guests_FilterRsvp" xml:space="preserve"><value>Filter odpovede</value></data>
+  <data name="Guests_FilterPart" xml:space="preserve"><value>Filter časti programu</value></data>
+  <data name="Guests_FilterGroup" xml:space="preserve"><value>Filter skupiny</value></data>
+  <data name="Guests_FilterAllRsvp" xml:space="preserve"><value>Všetky odpovede</value></data>
+  <data name="Guests_FilterAllParts" xml:space="preserve"><value>Všetky časti</value></data>
+  <data name="Guests_FilterAllGroups" xml:space="preserve"><value>Všetky skupiny</value></data>
+  <data name="Guests_NoGroup" xml:space="preserve"><value>Bez skupiny</value></data>
+  <data name="Guests_ListSummary" xml:space="preserve"><value>Zobrazené {0} z {1}</value></data>
+  <data name="Guests_Empty" xml:space="preserve"><value>Žiadni hostia nezodpovedajú výberu.</value></data>
+  <data name="Guests_NoPartAssigned" xml:space="preserve"><value>Bez vybranej časti programu</value></data>
+  <data name="Guests_PlaceholderBadge" xml:space="preserve"><value>(miesto bez mena)</value></data>
+  <data name="Guests_NoteBadge" xml:space="preserve"><value>(má poznámku)</value></data>
+  <data name="Guests_CountAccepted" xml:space="preserve"><value>potvrdení {0}</value></data>
+  <data name="Guests_CountTentative" xml:space="preserve"><value>možno {0}</value></data>
+  <data name="Guests_CountDeclined" xml:space="preserve"><value>odmietli {0}</value></data>
+  <data name="Guests_SelectHint" xml:space="preserve"><value>Vyberte hosťa alebo skupinu, alebo vytvorte nový záznam.</value></data>
+  <data name="Guests_GuestDetail" xml:space="preserve"><value>Hosť</value></data>
+  <data name="Guests_Name" xml:space="preserve"><value>Meno</value></data>
+  <data name="Guests_Kind" xml:space="preserve"><value>Druh záznamu</value></data>
+  <data name="Guests_Rsvp" xml:space="preserve"><value>Odpoveď</value></data>
+  <data name="Guests_Group" xml:space="preserve"><value>Skupina</value></data>
+  <data name="Guests_AgeCategory" xml:space="preserve"><value>Veková kategória</value></data>
+  <data name="Guests_ProgramParts" xml:space="preserve"><value>Zúčastní sa častí programu</value></data>
+  <data name="Guests_NoProgramParts" xml:space="preserve"><value>Projekt zatiaľ nemá časti programu.</value></data>
+  <data name="Guests_PrivateNote" xml:space="preserve"><value>Súkromná poznámka</value></data>
+  <data name="Guests_RevealNote" xml:space="preserve"><value>Zobraziť súkromnú poznámku</value></data>
+  <data name="Guests_PrivateNoteHint" xml:space="preserve"><value>Poznámka sa nezobrazuje v zozname a nebude súčasťou bežných exportov.</value></data>
+  <data name="Guests_ConfirmDelete" xml:space="preserve"><value>Naozaj zmazať tohto hosťa? Túto akciu nie je možné vrátiť.</value></data>
+  <data name="Guests_GroupDetail" xml:space="preserve"><value>Skupina</value></data>
+  <data name="Guests_GroupLabel" xml:space="preserve"><value>Názov skupiny</value></data>
+  <data name="Guests_ContactName" xml:space="preserve"><value>Kontaktná osoba</value></data>
+  <data name="Guests_ContactEmail" xml:space="preserve"><value>E-mail</value></data>
+  <data name="Guests_Phone" xml:space="preserve"><value>Telefón</value></data>
+  <data name="Guests_GroupNotes" xml:space="preserve"><value>Poznámky</value></data>
+  <data name="Guests_ContactHint" xml:space="preserve"><value>Kontakty sú len pre vašu evidenciu. Aplikácia nikoho nekontaktuje.</value></data>
+  <data name="Guests_DeleteGroup" xml:space="preserve"><value>Zmazať skupinu (hostia zostanú)</value></data>
+  <data name="Guests_GroupDeleted" xml:space="preserve"><value>Skupina bola zmazaná; jej hostia zostali v zozname bez skupiny.</value></data>
+  <data name="Guests_GroupRsvpTitle" xml:space="preserve"><value>Hromadná odpoveď skupiny</value></data>
+  <data name="Guests_GroupRsvpHint" xml:space="preserve"><value>Odpoveď sa nastaví len označeným členom. Výnimky odznačte.</value></data>
+  <data name="Guests_ApplyGroupRsvp" xml:space="preserve"><value>Nastaviť označeným</value></data>
+  <data name="Guests_GroupRsvpApplied" xml:space="preserve"><value>Odpoveď „{1}“ nastavená pre {0} členov.</value></data>
+
+  <!-- Backup and diagnostics -->
+  <data name="Backup_FileTypeName" xml:space="preserve"><value>Záloha profilu EventPlanner</value></data>
+  <data name="Backup_CreateTitle" xml:space="preserve"><value>Vytvoriť zálohu</value></data>
+  <data name="Backup_CreateHint" xml:space="preserve"><value>Záloha obsahuje všetky projekty vrátane kontaktov a súkromných poznámok a nie je šifrovaná. Záloha na tom istom disku nechráni pred stratou zariadenia — uložte ju aj inam.</value></data>
+  <data name="Backup_Create" xml:space="preserve"><value>Vytvoriť zálohu…</value></data>
+  <data name="Backup_OpenFolder" xml:space="preserve"><value>Otvoriť priečinok</value></data>
+  <data name="Backup_Created" xml:space="preserve"><value>Záloha bola overená a uložená: {0} ({1:N0} kB).</value></data>
+  <data name="Backup_RestoreTitle" xml:space="preserve"><value>Obnoviť zo zálohy</value></data>
+  <data name="Backup_RestoreHint" xml:space="preserve"><value>Záloha sa najprv overí a obnoví do nového samostatného profilu. Súčasný profil sa nemení a zostáva na disku.</value></data>
+  <data name="Backup_Restore" xml:space="preserve"><value>Vybrať zálohu na obnovu…</value></data>
+  <data name="Backup_Restored" xml:space="preserve"><value>Záloha z {2:g} bola obnovená do nového profilu: projekty {0}, hostia {1}.</value></data>
+  <data name="Backup_SwitchToRestored" xml:space="preserve"><value>Prepnúť na obnovený profil a zavrieť aplikáciu</value></data>
+  <data name="Backup_RestoredRestartRequired" xml:space="preserve"><value>Záloha bola obnovená do profilu {0}. Spustite aplikáciu znova.</value></data>
+  <data name="Diag_Title" xml:space="preserve"><value>Diagnostika</value></data>
+  <data name="Diag_Version" xml:space="preserve"><value>Verzia</value></data>
+  <data name="Diag_Runtime" xml:space="preserve"><value>Platforma</value></data>
+  <data name="Diag_Os" xml:space="preserve"><value>Operačný systém</value></data>
+  <data name="Diag_Profile" xml:space="preserve"><value>Profil</value></data>
+  <data name="Diag_Schema" xml:space="preserve"><value>Verzia dát</value></data>
+  <data name="Diag_DataFolder" xml:space="preserve"><value>Dátový priečinok</value></data>
+  <data name="Diag_FreeSpace" xml:space="preserve"><value>Voľné miesto</value></data>
+
+  <!-- Money (Etapa 2) -->
+  <data name="Nav_Vendors" xml:space="preserve"><value>Dodávatelia</value></data>
+  <data name="Nav_Budget" xml:space="preserve"><value>Rozpočet</value></data>
+  <data name="Common_Currency" xml:space="preserve"><value>Mena</value></data>
+  <data name="Money_Unknown" xml:space="preserve"><value>neuvedené</value></data>
+  <data name="Validation_InvalidAmount" xml:space="preserve"><value>Zadajte nezápornú sumu s najviac toľkými desatinnými miestami, koľko má mena (napr. 1250,50).</value></data>
+  <data name="Validation_AmountOutOfRange" xml:space="preserve"><value>Suma je mimo povoleného rozsahu.</value></data>
+  <data name="Validation_CurrencyMismatch" xml:space="preserve"><value>Mena ponuky sa líši od meny rozpočtovej položky. Bez prepočtu ich nie je možné spojiť; vytvorte novú položku.</value></data>
+  <data name="Validation_RefundExceedsPaid" xml:space="preserve"><value>Vrátená suma by prevýšila uhradené platby tejto položky.</value></data>
+  <data name="Validation_NotAllowedForStatus" xml:space="preserve"><value>Pre zvolený stav platby to nie je možné.</value></data>
+  <data name="Validation_HasPostedPayments" xml:space="preserve"><value>Položka má uhradené platby. Najprv ich zrušte alebo zaevidujte vrátenie.</value></data>
+  <data name="Warning_PaymentAlreadyRecorded" xml:space="preserve"><value>Táto platba už bola zaevidovaná; druhý záznam sa nevytvoril.</value></data>
+  <data name="Warning_QuoteTotalIncomplete" xml:space="preserve"><value>Celková cena ponuky nie je známa (napr. doprava). Do dohodnutej sumy sa prevzala len známa časť.</value></data>
+  <data name="Warning_LinkedBudgetNotUpdated" xml:space="preserve"><value>Ponuka je prepojená s rozpočtom, ktorý sa nezmenil. Ak chcete prevziať novú sumu, vyberte ponuku znova s aktualizáciou položky.</value></data>
+  <data name="Warning_ForeignCurrencyNotInTotals" xml:space="preserve"><value>Položka je v inej mene ako projekt a nezapočíta sa do spoločného súčtu.</value></data>
+
+  <!-- Domain labels (Etapa 2) -->
+  <data name="QuoteStatus_Received" xml:space="preserve"><value>Prijatá</value></data>
+  <data name="QuoteStatus_Selected" xml:space="preserve"><value>Vybraná</value></data>
+  <data name="QuoteStatus_Declined" xml:space="preserve"><value>Odmietnutá</value></data>
+  <data name="Transport_Unknown" xml:space="preserve"><value>Doprava neuvedená</value></data>
+  <data name="Transport_Included" xml:space="preserve"><value>Doprava v cene</value></data>
+  <data name="Transport_Separate" xml:space="preserve"><value>Doprava účtovaná zvlášť</value></data>
+  <data name="Transport_NotNeeded" xml:space="preserve"><value>Doprava nie je potrebná</value></data>
+  <data name="BudgetImpact_Leave" xml:space="preserve"><value>Nemeniť rozpočet</value></data>
+  <data name="BudgetImpact_Create" xml:space="preserve"><value>Vytvoriť novú rozpočtovú položku</value></data>
+  <data name="BudgetImpact_Update" xml:space="preserve"><value>Aktualizovať existujúcu položku</value></data>
+  <data name="PaymentKind_Deposit" xml:space="preserve"><value>Záloha</value></data>
+  <data name="PaymentKind_Balance" xml:space="preserve"><value>Platba / doplatok</value></data>
+  <data name="PaymentKind_Refund" xml:space="preserve"><value>Vrátenie peňazí</value></data>
+  <data name="PaymentStatus_Planned" xml:space="preserve"><value>Plánovaná</value></data>
+  <data name="PaymentStatus_Posted" xml:space="preserve"><value>Uhradená</value></data>
+  <data name="PaymentStatus_Cancelled" xml:space="preserve"><value>Zrušená</value></data>
+  <data name="QuoteField_Transport" xml:space="preserve"><value>doprava</value></data>
+  <data name="QuoteField_TransportPrice" xml:space="preserve"><value>cena dopravy</value></data>
+  <data name="QuoteField_PeopleCount" xml:space="preserve"><value>počet osôb</value></data>
+  <data name="QuoteField_Exclusions" xml:space="preserve"><value>vylúčené služby</value></data>
+  <data name="QuoteField_ValidUntil" xml:space="preserve"><value>platnosť</value></data>
+
+  <!-- Vendors -->
+  <data name="Vendors_VendorsTitle" xml:space="preserve"><value>Dodávatelia</value></data>
+  <data name="Vendors_NewVendor" xml:space="preserve"><value>Nový dodávateľ</value></data>
+  <data name="Vendors_NoVendors" xml:space="preserve"><value>Zatiaľ žiadni dodávatelia.</value></data>
+  <data name="Vendors_VendorDetail" xml:space="preserve"><value>Dodávateľ</value></data>
+  <data name="Vendors_Name" xml:space="preserve"><value>Názov</value></data>
+  <data name="Vendors_Category" xml:space="preserve"><value>Kategória</value></data>
+  <data name="Vendors_CategoryHint" xml:space="preserve"><value>Ponuky sa porovnávajú v rámci rovnakej kategórie, napr. Výzdoba alebo Catering.</value></data>
+  <data name="Vendors_Contact" xml:space="preserve"><value>Kontakt</value></data>
+  <data name="Vendors_Notes" xml:space="preserve"><value>Poznámky</value></data>
+  <data name="Vendors_DeleteVendor" xml:space="preserve"><value>Zmazať dodávateľa a jeho ponuky</value></data>
+  <data name="Vendors_VendorDeleted" xml:space="preserve"><value>Dodávateľ bol zmazaný. Rozpočtové položky zostali, len stratili odkaz na ponuku.</value></data>
+  <data name="Vendors_ComparisonTitle" xml:space="preserve"><value>Porovnanie ponúk</value></data>
+  <data name="Vendors_NewQuote" xml:space="preserve"><value>Nová ponuka</value></data>
+  <data name="Vendors_NoQuotes" xml:space="preserve"><value>V tejto kategórii zatiaľ nie sú ponuky.</value></data>
+  <data name="Vendors_MultipleCurrencies" xml:space="preserve"><value>Ponuky sú v rôznych menách ({0}). Porovnávajú sa len v rámci rovnakej meny, bez prepočtu a bez spoločného súčtu.</value></data>
+  <data name="Vendors_LowestBadge" xml:space="preserve"><value>najnižšia v mene</value></data>
+  <data name="Vendors_TransportSeparate" xml:space="preserve"><value>Doprava zvlášť: {0}</value></data>
+  <data name="Vendors_TotalIncomplete" xml:space="preserve"><value>neúplná (chýba časť ceny)</value></data>
+  <data name="Vendors_TotalLabel" xml:space="preserve"><value>Spolu: {0}</value></data>
+  <data name="Vendors_PeopleCount" xml:space="preserve"><value>Osoby: {0}</value></data>
+  <data name="Vendors_ValidUntil" xml:space="preserve"><value>Platí do: {0:d}</value></data>
+  <data name="Vendors_ScopeLabel" xml:space="preserve"><value>Zahrnuté: {0}</value></data>
+  <data name="Vendors_ExclusionsLabel" xml:space="preserve"><value>Vylúčené: {0}</value></data>
+  <data name="Vendors_ExclusionsNotStated" xml:space="preserve"><value>neuvedené (nie je isté, že nič)</value></data>
+  <data name="Vendors_ForeignCurrency" xml:space="preserve"><value>Ponuka v mene {0}; neporovnáva sa s ponukami v {1} a nezapočíta sa do spoločného súčtu.</value></data>
+  <data name="Vendors_Missing" xml:space="preserve"><value>Chýba: {0}</value></data>
+  <data name="Vendors_SelectHint" xml:space="preserve"><value>Vyberte dodávateľa alebo ponuku, prípadne pridajte novú.</value></data>
+  <data name="Vendors_QuoteDetail" xml:space="preserve"><value>Ponuka</value></data>
+  <data name="Vendors_QuoteVendor" xml:space="preserve"><value>Dodávateľ ponuky</value></data>
+  <data name="Vendors_ChooseVendor" xml:space="preserve"><value>(vyberte dodávateľa)</value></data>
+  <data name="Vendors_Description" xml:space="preserve"><value>Popis ponuky</value></data>
+  <data name="Vendors_Amount" xml:space="preserve"><value>Suma</value></data>
+  <data name="Vendors_Transport" xml:space="preserve"><value>Doprava</value></data>
+  <data name="Vendors_TransportAmount" xml:space="preserve"><value>Cena dopravy</value></data>
+  <data name="Vendors_PeopleCountLabel" xml:space="preserve"><value>Počet osôb, pre ktoré ponuka platí</value></data>
+  <data name="Vendors_Scope" xml:space="preserve"><value>Zahrnuté položky</value></data>
+  <data name="Vendors_Exclusions" xml:space="preserve"><value>Vylúčené služby</value></data>
+  <data name="Vendors_UnknownHint" xml:space="preserve"><value>Prázdne pole znamená „neuvedené“, nie nulu ani zahrnutú službu.</value></data>
+  <data name="Vendors_ValidUntilLabel" xml:space="preserve"><value>Ponuka platí do</value></data>
+  <data name="Vendors_Decline" xml:space="preserve"><value>Odmietnuť</value></data>
+  <data name="Vendors_QuoteDeclined" xml:space="preserve"><value>Ponuka je označená ako odmietnutá.</value></data>
+  <data name="Vendors_SelectTitle" xml:space="preserve"><value>Rozhodnutie o ponuke</value></data>
+  <data name="Vendors_DecisionNote" xml:space="preserve"><value>Dôvod rozhodnutia (nepovinné)</value></data>
+  <data name="Vendors_DecisionHistory" xml:space="preserve"><value>História rozhodnutí</value></data>
+  <data name="Vendors_NoDecisions" xml:space="preserve"><value>Zatiaľ bez rozhodnutia o ponukách tohto dodávateľa.</value></data>
+  <data name="Vendors_DecisionPrice" xml:space="preserve"><value>Cena v čase rozhodnutia: {0}</value></data>
+  <data name="Vendors_DecisionHistoryHint" xml:space="preserve"><value>Ceny sú zapísané tak, ako platili v čase rozhodnutia; neskoršia úprava ponuky ich nezmení.</value></data>
+  <data name="QuoteDecision_Selected" xml:space="preserve"><value>Vybraná</value></data>
+  <data name="QuoteDecision_Replaced" xml:space="preserve"><value>Nahradená inou ponukou</value></data>
+  <data name="QuoteDecision_Declined" xml:space="preserve"><value>Odmietnutá</value></data>
+  <data name="Vendors_SelectionHint" xml:space="preserve"><value>Výber ponuky je len vaše rozhodnutie v appke: nič nerezervuje ani nikoho nekontaktuje. Rozpočet sa zmení iba podľa zvolenej možnosti.</value></data>
+  <data name="Vendors_BudgetImpact" xml:space="preserve"><value>Dopad na rozpočet</value></data>
+  <data name="Vendors_BudgetItem" xml:space="preserve"><value>Rozpočtová položka</value></data>
+  <data name="Vendors_ChooseBudgetItem" xml:space="preserve"><value>(vyberte položku)</value></data>
+  <data name="Vendors_SelectQuote" xml:space="preserve"><value>Vybrať túto ponuku</value></data>
+  <data name="Vendors_QuoteSelectedBudgetUnchanged" xml:space="preserve"><value>Ponuka je vybraná. Rozpočet zostal bez zmeny.</value></data>
+  <data name="Vendors_QuoteSelectedBudgetUpdated" xml:space="preserve"><value>Ponuka je vybraná a dohodnutá suma je zapísaná v rozpočte.</value></data>
+
+  <!-- Budget -->
+  <data name="Budget_Estimated" xml:space="preserve"><value>Plán</value></data>
+  <data name="Budget_Committed" xml:space="preserve"><value>Dohodnuté</value></data>
+  <data name="Budget_Paid" xml:space="preserve"><value>Uhradené (netto)</value></data>
+  <data name="Budget_RemainingTitle" xml:space="preserve"><value>Zostáva doplatiť</value></data>
+  <data name="Budget_OverpaidTitle" xml:space="preserve"><value>Preplatok</value></data>
+  <data name="Budget_TotalsDetail" xml:space="preserve"><value>Vrátené: {0} · naplánované platby (zatiaľ neuhradené): {1}</value></data>
+  <data name="Budget_OverpaidHint" xml:space="preserve"><value>Niektoré položky sú preplatené. Preplatok sa neodpočíta od toho, čo zostáva doplatiť pri iných položkách.</value></data>
+  <data name="Budget_ItemsWithoutEstimate" xml:space="preserve"><value>Položky bez plánu: {0}.</value></data>
+  <data name="Budget_ItemsWithoutCommitment" xml:space="preserve"><value>Položky bez dohodnutej sumy: {0}.</value></data>
+  <data name="Budget_OtherCurrencyTotals" xml:space="preserve"><value>Položky v mene {0} (nezapočítané do spoločného súčtu, bez prepočtu): dohodnuté {1}, uhradené {2}, zostáva {3}.</value></data>
+  <data name="Budget_ItemsTitle" xml:space="preserve"><value>Položky rozpočtu</value></data>
+  <data name="Budget_NewItem" xml:space="preserve"><value>Nová položka</value></data>
+  <data name="Budget_NoItems" xml:space="preserve"><value>Zatiaľ žiadne položky. Pridajte ich ručne alebo pri výbere ponuky.</value></data>
+  <data name="Budget_QuoteBadge" xml:space="preserve"><value>· z ponuky</value></data>
+  <data name="Budget_EstimatedShort" xml:space="preserve"><value>plán {0}</value></data>
+  <data name="Budget_CommittedShort" xml:space="preserve"><value>dohodnuté {0}</value></data>
+  <data name="Budget_PaidShort" xml:space="preserve"><value>uhradené {0}</value></data>
+  <data name="Budget_ScheduledShort" xml:space="preserve"><value>naplánované {0}</value></data>
+  <data name="Budget_ForeignItem" xml:space="preserve"><value>Mena {0} – nezapočítava sa do spoločného súčtu projektu.</value></data>
+  <data name="Budget_BalanceUnknown" xml:space="preserve"><value>Bez dohodnutej sumy</value></data>
+  <data name="Budget_Remaining" xml:space="preserve"><value>Zostáva {0}</value></data>
+  <data name="Budget_Overpaid" xml:space="preserve"><value>Preplatok {0}</value></data>
+  <data name="Budget_SelectHint" xml:space="preserve"><value>Vyberte položku rozpočtu alebo pridajte novú.</value></data>
+  <data name="Budget_ItemDetail" xml:space="preserve"><value>Položka rozpočtu</value></data>
+  <data name="Budget_Title" xml:space="preserve"><value>Názov</value></data>
+  <data name="Budget_AmountsHint" xml:space="preserve"><value>Prázdna suma znamená „zatiaľ neznáme“, nie nulu. Mena sa po vytvorení nemení.</value></data>
+  <data name="Budget_ConfirmDelete" xml:space="preserve"><value>Zmazať položku aj jej plánované a zrušené platby?</value></data>
+  <data name="Budget_PaymentsTitle" xml:space="preserve"><value>Platby</value></data>
+  <data name="Budget_NoPayments" xml:space="preserve"><value>Zatiaľ žiadne platby.</value></data>
+  <data name="Budget_PaidOn" xml:space="preserve"><value>uhradené {0:d}</value></data>
+  <data name="Budget_DueOn" xml:space="preserve"><value>splatné {0:d}</value></data>
+  <data name="Budget_NoDueDate" xml:space="preserve"><value>bez termínu splatnosti</value></data>
+  <data name="Budget_MarkPaid" xml:space="preserve"><value>Označiť ako uhradené</value></data>
+  <data name="Budget_CancelPayment" xml:space="preserve"><value>Zrušiť platbu</value></data>
+  <data name="Budget_NewPayment" xml:space="preserve"><value>Nová platba</value></data>
+  <data name="Budget_PaymentKind" xml:space="preserve"><value>Typ</value></data>
+  <data name="Budget_PaymentStatus" xml:space="preserve"><value>Stav</value></data>
+  <data name="Budget_PaidDate" xml:space="preserve"><value>Dátum úhrady</value></data>
+  <data name="Budget_DueDate" xml:space="preserve"><value>Splatnosť (nepovinné)</value></data>
+  <data name="Budget_Reference" xml:space="preserve"><value>Poznámka / variabilný symbol</value></data>
+  <data name="Budget_PaymentHint" xml:space="preserve"><value>Stav úhrady je nezávislý od splatnosti. Plánovanú platbu po zaplatení označte ako uhradenú – nezadávajte ju druhýkrát. Vrátenie je samostatný typ s kladnou sumou.</value></data>
+  <data name="Budget_RecordPayment" xml:space="preserve"><value>Zaevidovať platbu</value></data>
+  <data name="Budget_PaymentRecorded" xml:space="preserve"><value>Platba je zaevidovaná.</value></data>
+  <data name="Budget_PaymentPosted" xml:space="preserve"><value>Platba je označená ako uhradená.</value></data>
+  <data name="Budget_PaymentCancelled" xml:space="preserve"><value>Platba je zrušená a ostáva v histórii.</value></data>
+
+  <!-- Overview (Etapa 2) -->
+  <data name="Overview_Budget" xml:space="preserve"><value>Rozpočet: plán {0} · dohodnuté {1} · uhradené {2} · zostáva {3}</value></data>
+  <data name="Overview_IssueOverpaid" xml:space="preserve"><value>Preplatok v rozpočte: {0}</value></data>
+  <data name="Overview_IssueOtherCurrency" xml:space="preserve"><value>Rozpočtové položky v inej mene ({0}× {1}) nie sú v spoločnom súčte.</value></data>
+</root>

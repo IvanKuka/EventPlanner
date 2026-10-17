@@ -1,0 +1,2 @@
+# Shell scripts run on macOS/Linux runners; CRLF would break their shebang regardless of local core.autocrlf.
+*.sh text eol=lf

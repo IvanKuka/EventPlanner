@@ -1,0 +1,62 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="using:EventPlanner.Desktop.ViewModels.Shell"
+        xmlns:vm="using:EventPlanner.Desktop.ViewModels"
+        xmlns:l="using:EventPlanner.Desktop.Localization"
+        x:Class="EventPlanner.Desktop.Views.MainWindow"
+        x:DataType="shell:ShellViewModel"
+        Title="{x:Static l:Strings.App_Title}"
+        Width="1180" Height="760" MinWidth="900" MinHeight="600"
+        WindowStartupLocation="CenterScreen">
+
+  <Grid RowDefinitions="Auto,*,Auto">
+    <!-- Header: active project -->
+    <Border Grid.Row="0" Padding="16,10" Background="#14808080">
+      <StackPanel Orientation="Horizontal" Spacing="12">
+        <TextBlock Text="{x:Static l:Strings.App_Title}" FontWeight="SemiBold" VerticalAlignment="Center" />
+        <TextBlock Text="›" Opacity="0.5" VerticalAlignment="Center" />
+        <TextBlock Text="{Binding ProjectTitle}" VerticalAlignment="Center" />
+      </StackPanel>
+    </Border>
+
+    <!-- Loading -->
+    <StackPanel Grid.Row="1" IsVisible="{Binding IsLoading}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+      <ProgressBar IsIndeterminate="True" Width="240" />
+      <TextBlock Text="{x:Static l:Strings.Startup_Loading}" HorizontalAlignment="Center" />
+    </StackPanel>
+
+    <!-- Startup failure with recovery -->
+    <StackPanel Grid.Row="1" IsVisible="{Binding IsFailed}" MaxWidth="560" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+      <TextBlock Classes="h1" Text="{x:Static l:Strings.Startup_FailedTitle}" />
+      <TextBlock Text="{Binding FailureMessage}" TextWrapping="Wrap" />
+      <TextBlock Text="{Binding RecoveryMessage}" TextWrapping="Wrap" FontWeight="SemiBold"
+                 IsVisible="{Binding RecoveryMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
+      <StackPanel Classes="buttons">
+        <Button Classes="accent" Content="{x:Static l:Strings.Startup_RecoverFromBackup}"
+                Command="{Binding RecoverFromBackupCommand}" IsVisible="{Binding CanRecoverFromBackup}" />
+        <Button Content="{x:Static l:Strings.Startup_Exit}" Command="{Binding ExitCommand}" />
+      </StackPanel>
+    </StackPanel>
+
+    <!-- Ready: navigation + page -->
+    <Grid Grid.Row="1" ColumnDefinitions="200,*" IsVisible="{Binding IsReady}">
+      <ListBox Grid.Column="0" ItemsSource="{Binding Pages}" SelectedItem="{Binding SelectedPage}"
+               AutomationProperties.Name="{x:Static l:Strings.Nav_Label}" Margin="0,8">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="vm:IPage">
+            <TextBlock Text="{Binding Title}" Margin="4,6" />
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+      <ContentControl Grid.Column="1" Content="{Binding SelectedPage}" Margin="16,8,16,8" />
+    </Grid>
+
+    <!-- Status bar -->
+    <Border Grid.Row="2" Padding="16,4" Background="#0C808080">
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <TextBlock Text="{x:Static l:Strings.Status_ProfileLabel}" Opacity="0.7" FontSize="12" />
+        <TextBlock Text="{Binding ProfileName}" FontSize="12" />
+      </StackPanel>
+    </Border>
+  </Grid>
+</Window>
