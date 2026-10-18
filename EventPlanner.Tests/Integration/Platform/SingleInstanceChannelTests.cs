@@ -31,6 +31,25 @@ public sealed class SingleInstanceChannelTests
         await twice.Task.WaitAsync(TimeSpan.FromSeconds(5), Ct);
     }
 
+    /// <summary>The listener keeps a free instance while it serves one, so simultaneous starts all get through.</summary>
+    [Fact]
+    public async Task Simultaneous_starts_are_all_acknowledged()
+    {
+        var profileDir = TestProfile.NewRoot().ProfileDirectory("default");
+        using var running = new SingleInstanceChannel(profileDir, NullLogger.Instance);
+        var activations = 0;
+        running.Listen(() => Interlocked.Increment(ref activations));
+
+        var starts = Enumerable.Range(0, 20).Select(async _ =>
+        {
+            using var start = new SingleInstanceChannel(profileDir, NullLogger.Instance);
+            return await start.TryActivateRunningInstanceAsync(Ct);
+        });
+
+        Assert.All(await Task.WhenAll(starts), Assert.True);
+        Assert.Equal(20, Volatile.Read(ref activations));
+    }
+
     [Fact]
     public async Task Without_a_running_instance_activation_reports_false()
     {

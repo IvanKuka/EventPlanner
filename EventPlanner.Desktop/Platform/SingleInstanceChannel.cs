@@ -17,7 +17,8 @@ public sealed class SingleInstanceChannel(string profileDirectory, ILogger logge
     private const byte Acknowledge = 0x06;
     private const int Attempts = 3;
     private static readonly byte[] ActivateToken = Encoding.ASCII.GetBytes("activate\n");
-    private static readonly TimeSpan ConnectTimeout = TimeSpan.FromSeconds(1);
+    // Generous for a loaded machine; it only delays the "locked profile" message when nobody listens.
+    private static readonly TimeSpan ConnectTimeout = TimeSpan.FromSeconds(2);
     private static readonly TimeSpan ExchangeTimeout = TimeSpan.FromSeconds(2);
     private readonly CancellationTokenSource _stop = new();
 
@@ -71,16 +72,68 @@ public sealed class SingleInstanceChannel(string profileDirectory, ILogger logge
         _stop.Dispose();
     }
 
+    /// <summary>
+    /// Accept loop. The next listening instance is created before the current connection is
+    /// handled, so the pipe never disappears between two requests (with a single instance a quick
+    /// second start could find no listener and time out, seen on a loaded CI runner).
+    /// </summary>
     private async Task ListenAsync(Action activate, CancellationToken cancellationToken)
     {
-        while (!cancellationToken.IsCancellationRequested)
+        NamedPipeServerStream? next = null;
+        try
         {
-            try
+            next = CreateServer();
+            while (!cancellationToken.IsCancellationRequested)
             {
-                await using var server = new NamedPipeServerStream(
-                    PipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.CurrentUserOnly | PipeOptions.Asynchronous);
-                await server.WaitForConnectionAsync(cancellationToken);
+                try
+                {
+                    await next.WaitForConnectionAsync(cancellationToken);
+                }
+                catch (IOException ex)
+                {
+                    logger.LogWarning(ex, "Activation listener on {Pipe} failed; restarting it", PipeName);
+                    await next.DisposeAsync();
+                    next = CreateServer();
+                    continue;
+                }
 
+                var connected = next;
+                next = CreateServer();
+                _ = HandleAsync(connected, activate, cancellationToken);
+            }
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            // The app is closing.
+        }
+        catch (IOException ex)
+        {
+            // The pipe could not be created at all (e.g. name taken by another program): later starts
+            // then show the locked-profile message instead of activating this window.
+            logger.LogWarning(ex, "Activation listener on {Pipe} could not start", PipeName);
+        }
+        finally
+        {
+            if (next is not null)
+            {
+                await next.DisposeAsync();
+            }
+        }
+    }
+
+    private NamedPipeServerStream CreateServer() => new(
+        PipeName,
+        PipeDirection.InOut,
+        NamedPipeServerStream.MaxAllowedServerInstances,
+        PipeTransmissionMode.Byte,
+        PipeOptions.CurrentUserOnly | PipeOptions.Asynchronous);
+
+    private async Task HandleAsync(NamedPipeServerStream server, Action activate, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await using (server)
+            {
                 // Fixed-size read with a deadline: a peer that sends nothing or garbage cannot block
                 // the listener or make it allocate.
                 using var exchange = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -94,15 +147,11 @@ public sealed class SingleInstanceChannel(string profileDirectory, ILogger logge
                     await server.FlushAsync(exchange.Token);
                 }
             }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-            {
-                return;
-            }
-            catch (Exception ex) when (ex is IOException or OperationCanceledException)
-            {
-                // A broken or silent connection must not stop listening for the next start.
-                logger.LogWarning(ex, "Activation request on {Pipe} failed", PipeName);
-            }
+        }
+        catch (Exception ex) when (ex is IOException or OperationCanceledException)
+        {
+            // A broken or silent connection must not stop listening for the next start.
+            logger.LogWarning(ex, "Activation request on {Pipe} failed", PipeName);
         }
     }
 }
