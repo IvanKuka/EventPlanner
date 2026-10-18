@@ -11,6 +11,10 @@ public sealed record TaskRow(TaskDto Task, string? PredecessorTitle)
 
     public bool IsDone => Task.State == TaskState.Done;
 
+    public bool IsInProgress => Task.State == TaskState.InProgress;
+
+    public bool IsTodo => Task.State == TaskState.Todo;
+
     public bool IsOverdue => Task.IsOverdue;
 
     public bool IsHighPriority => Task.Priority == TaskPriority.High && !IsDone;

@@ -55,6 +55,7 @@
           <SolidColorBrush x:Key="AppControlBorderBrush" Color="#D1D5DB" />
           <SolidColorBrush x:Key="AppHoverBrush" Color="#F3F4F6" />
           <SolidColorBrush x:Key="AppSelectionBrush" Color="#FCE7F3" />
+          <SolidColorBrush x:Key="AppSelectedRowBrush" Color="#F1F3F7" />
           <SolidColorBrush x:Key="AppDisabledSurfaceBrush" Color="#F9FAFB" />
           <SolidColorBrush x:Key="AppDisabledTextBrush" Color="#9CA3AF" />
           <SolidColorBrush x:Key="AppAccentBrush" Color="#BE185D" />
@@ -80,6 +81,7 @@
           <SolidColorBrush x:Key="AppControlBorderBrush" Color="#445064" />
           <SolidColorBrush x:Key="AppHoverBrush" Color="#2C3848" />
           <SolidColorBrush x:Key="AppSelectionBrush" Color="#4A2238" />
+          <SolidColorBrush x:Key="AppSelectedRowBrush" Color="#2E3A4C" />
           <SolidColorBrush x:Key="AppDisabledSurfaceBrush" Color="#1B2430" />
           <SolidColorBrush x:Key="AppDisabledTextBrush" Color="#8995A8" />
           <SolidColorBrush x:Key="AppAccentBrush" Color="#BE185D" />

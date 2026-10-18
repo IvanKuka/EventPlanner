@@ -94,6 +94,25 @@
     <Setter Property="FontWeight" Value="SemiBold" />
     <Setter Property="FontSize" Value="12" />
   </Style>
+  <!-- State chips: green = finished, amber = in progress, grey = not started. -->
+  <Style Selector="Border.pill.positive">
+    <Setter Property="Background" Value="{DynamicResource MessageInfoBrush}" />
+  </Style>
+  <Style Selector="Border.pill.positive TextBlock">
+    <Setter Property="Foreground" Value="{DynamicResource StatusPositiveBrush}" />
+  </Style>
+  <Style Selector="Border.pill.notice">
+    <Setter Property="Background" Value="{DynamicResource MessageWarningBrush}" />
+  </Style>
+  <Style Selector="Border.pill.notice TextBlock">
+    <Setter Property="Foreground" Value="{DynamicResource StatusNoticeBrush}" />
+  </Style>
+  <Style Selector="Border.pill.neutral">
+    <Setter Property="Background" Value="{DynamicResource AppHoverBrush}" />
+  </Style>
+  <Style Selector="Border.pill.neutral TextBlock">
+    <Setter Property="Foreground" Value="{DynamicResource AppMutedBrush}" />
+  </Style>
   <Style Selector="Border.icon-tile">
     <Setter Property="Background" Value="{DynamicResource AppSelectionBrush}" />
     <Setter Property="CornerRadius" Value="10" />
@@ -273,12 +292,20 @@
     <Setter Property="Background" Value="{DynamicResource AppHoverBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource AppTextBrush}" />
   </Style>
+  <!-- Selection is neutral with an accent outline: a tinted (pink) fill read as a warning state,
+       e.g. a finished task looked "red" only because it stayed selected after the action. -->
+  <Style Selector="ListBoxItem">
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+  </Style>
   <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
-    <Setter Property="Background" Value="{DynamicResource AppSelectionBrush}" />
+    <Setter Property="Background" Value="{DynamicResource AppSelectedRowBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AppAccentBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource AppTextBrush}" />
   </Style>
   <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-    <Setter Property="Background" Value="{DynamicResource AppSelectionBrush}" />
+    <Setter Property="Background" Value="{DynamicResource AppSelectedRowBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AppAccentBrush}" />
   </Style>
 
   <!-- Main navigation: a horizontal ListBox shown as tabs with an accent underline. -->
