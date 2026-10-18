@@ -285,6 +285,56 @@ namespace EventPlanner.Infrastructure.Data.Migrations
                     b.ToTable("ParticipantGroups", (string)null);
                 });
 
+            modelBuilder.Entity("EventPlanner.Core.Models.Tasks.EventTask", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("DueLocalDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OwnerLabel")
+                        .HasMaxLength(120)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("PredecessorId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("Revision")
+                        .IsConcurrencyToken()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PredecessorId");
+
+                    b.HasIndex("EventId", "State", "DueLocalDate");
+
+                    b.ToTable("Tasks", (string)null);
+                });
+
             modelBuilder.Entity("EventPlanner.Core.Models.Vendors.Quote", b =>
                 {
                     b.Property<Guid>("Id")
@@ -492,6 +542,20 @@ namespace EventPlanner.Infrastructure.Data.Migrations
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("EventPlanner.Core.Models.Tasks.EventTask", b =>
+                {
+                    b.HasOne("EventPlanner.Core.Models.Events.EventProject", null)
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EventPlanner.Core.Models.Tasks.EventTask", null)
+                        .WithMany()
+                        .HasForeignKey("PredecessorId")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("EventPlanner.Core.Models.Vendors.Quote", b =>

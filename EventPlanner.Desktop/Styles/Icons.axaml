@@ -9,6 +9,7 @@
   <StreamGeometry x:Key="Icon.Guests">M8.5 5 A2.5 2.5 0 1 1 3.5 5 A2.5 2.5 0 1 1 8.5 5 Z M1.5 13.5 C1.5 10.8 3.5 9 6 9 C8.5 9 10.5 10.8 10.5 13.5 M10.5 2.8 A2.3 2.3 0 0 1 10.5 7.2 M12 9.3 C13.5 9.9 14.5 11.4 14.5 13.5</StreamGeometry>
   <StreamGeometry x:Key="Icon.Vendors">M2 6 L3 2.5 H13 L14 6 Z M3 6 V13.5 H13 V6 M6.5 13.5 V10 H9.5 V13.5</StreamGeometry>
   <StreamGeometry x:Key="Icon.Budget">M2 5 H13 A1 1 0 0 1 14 6 V12.5 A1 1 0 0 1 13 13.5 H3 A1 1 0 0 1 2 12.5 Z M2 5 L10.5 2.5 L11.3 5 M10.5 9.25 H11.5</StreamGeometry>
+  <StreamGeometry x:Key="Icon.Tasks">M2 3.5 L3.25 4.75 L5.25 2.5 M7.5 3.75 H14 M2 8 L3.25 9.25 L5.25 7 M7.5 8.25 H14 M2.5 12.75 H4.5 M7.5 12.75 H14</StreamGeometry>
   <StreamGeometry x:Key="Icon.Backup">M1.5 2.5 H14.5 V5.5 H1.5 Z M2.5 5.5 V13.5 H13.5 V5.5 M6.5 8.5 H9.5</StreamGeometry>
 
   <!-- Actions -->

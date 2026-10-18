@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:overview="using:EventPlanner.Desktop.ViewModels.Overview"
              xmlns:guests="using:EventPlanner.Contracts.Guests"
+             xmlns:tasks="using:EventPlanner.Desktop.ViewModels.Tasks"
              xmlns:l="using:EventPlanner.Desktop.Localization"
              x:Class="EventPlanner.Desktop.Views.OverviewView"
              x:DataType="overview:OverviewViewModel">
@@ -77,8 +78,29 @@
             <TextBlock Classes="muted" FontSize="12" Text="{x:Static l:Strings.Overview_CountsHint}" />
           </StackPanel>
 
-          <!-- Open issues -->
+          <!-- Upcoming tasks and open issues -->
           <StackPanel Grid.Column="2">
+            <TextBlock Classes="h2" Text="{x:Static l:Strings.Overview_TasksTitle}" Margin="0,0,0,6" />
+            <Border Classes="card">
+              <StackPanel Spacing="6">
+                <TextBlock Classes="muted" Text="{x:Static l:Strings.Overview_NoTasks}" IsVisible="{Binding !UpcomingTasks.Count}" />
+                <ItemsControl ItemsSource="{Binding UpcomingTasks}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="tasks:TaskRow">
+                      <StackPanel Margin="0,0,0,6">
+                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                        <WrapPanel>
+                          <TextBlock Classes="muted" FontSize="12" Margin="0,0,10,0" Text="{Binding DueText}" />
+                          <TextBlock Classes="notice" FontSize="12" Margin="0,0,10,0" FontWeight="SemiBold" Text="{x:Static l:Strings.Tasks_Overdue}" IsVisible="{Binding IsOverdue}" />
+                          <TextBlock Classes="muted" FontSize="12" Text="{Binding OwnerText}" IsVisible="{Binding OwnerText, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                        </WrapPanel>
+                      </StackPanel>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </Border>
+
             <TextBlock Classes="h2" Text="{x:Static l:Strings.Overview_IssuesTitle}" Margin="0,0,0,6" />
             <Border Classes="card" IsVisible="{Binding !Issues.Count}">
               <StackPanel Classes="icon-text">

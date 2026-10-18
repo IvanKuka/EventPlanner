@@ -2,6 +2,7 @@ using EventPlanner.Contracts.Budget;
 using EventPlanner.Contracts.Events;
 using EventPlanner.Contracts.Guests;
 using EventPlanner.Contracts.Results;
+using EventPlanner.Contracts.Tasks;
 using EventPlanner.Contracts.Vendors;
 using EventPlanner.Tests.Fixtures;
 using Microsoft.EntityFrameworkCore;
@@ -76,6 +77,8 @@ public sealed class EventProjectDeleteTests
         var selection = (await profile.Quotes.SelectQuoteAsync(new SelectQuote(quote.Id, quote.Revision, BudgetImpactPolicy.CreateBudgetItem), Ct)).Value;
         Assert.True((await profile.Budget.RecordPaymentAsync(
             new RecordPayment(selection.BudgetItemId!.Value, Guid.NewGuid(), PaymentKind.Deposit, 100_00, PaymentStatus.Posted, new DateOnly(2027, 1, 1), null, null), Ct)).IsSuccess);
+        var first = (await profile.Tasks.CreateAsync(new CreateTask(project.Id, new TaskInput("Vybrať sálu", null, null, TaskPriority.Normal, null, null)), Ct)).Value;
+        Assert.True((await profile.Tasks.CreateAsync(new CreateTask(project.Id, new TaskInput("Pozvánky", null, null, TaskPriority.High, first.Id, null)), Ct)).IsSuccess);
         return (await profile.Events.GetAsync(project.Id, Ct)).Value;
     }
 
@@ -94,6 +97,7 @@ public sealed class EventProjectDeleteTests
             ["QuoteDecisions"] = await db.QuoteDecisions.CountAsync(Ct),
             ["BudgetItems"] = await db.BudgetItems.CountAsync(Ct),
             ["Payments"] = await db.Payments.CountAsync(Ct),
+            ["Tasks"] = await db.Tasks.CountAsync(Ct),
         };
     }
 }

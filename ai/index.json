@@ -44,6 +44,11 @@
       "ai/specs/03-processing.md",
       "ai/knowledge/core-boundaries.md"
     ],
+    "tasks": [
+      "ai/specs/02-domain-data.md",
+      "ai/specs/03-processing.md",
+      "ai/knowledge/core-boundaries.md"
+    ],
     "roadmap": [
       "ai/specs/07-roadmap-decisions.md",
       "ai/specs/15-delivery-matrix.md"
@@ -55,7 +60,7 @@
     "Storage": { "status": "implemented", "paths": ["EventPlanner.Infrastructure/Data", "EventPlanner.Infrastructure/Profiles", "EventPlanner.Infrastructure/Backup"] },
     "Vendors": { "status": "implemented", "paths": ["EventPlanner.Core/Services/Vendors", "EventPlanner.Core/Models/Vendors", "EventPlanner.Desktop/ViewModels/Vendors"] },
     "Budget": { "status": "implemented", "paths": ["EventPlanner.Core/Services/Budget", "EventPlanner.Core/Models/Budget", "EventPlanner.Desktop/ViewModels/Budget"] },
-    "Tasks": { "status": "planned" },
+    "Tasks": { "status": "implemented", "paths": ["EventPlanner.Core/Services/Tasks", "EventPlanner.Core/Models/Tasks", "EventPlanner.Desktop/ViewModels/Tasks"] },
     "Timeline": { "status": "planned" },
     "Seating": { "status": "planned" },
     "Exports": { "status": "planned" }

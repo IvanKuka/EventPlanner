@@ -3,6 +3,7 @@ using EventPlanner.Core.Ports;
 using EventPlanner.Core.Services.Budget;
 using EventPlanner.Core.Services.Events;
 using EventPlanner.Core.Services.Guests;
+using EventPlanner.Core.Services.Tasks;
 using EventPlanner.Core.Services.Vendors;
 using EventPlanner.Desktop.Platform;
 using EventPlanner.Desktop.ViewModels.Backup;
@@ -11,6 +12,7 @@ using EventPlanner.Desktop.ViewModels.Events;
 using EventPlanner.Desktop.ViewModels.Guests;
 using EventPlanner.Desktop.ViewModels.Overview;
 using EventPlanner.Desktop.ViewModels.Shell;
+using EventPlanner.Desktop.ViewModels.Tasks;
 using EventPlanner.Desktop.ViewModels.Vendors;
 using EventPlanner.Infrastructure.Backup;
 using EventPlanner.Infrastructure.Data;
@@ -66,6 +68,7 @@ public static class AppServices
         services.AddSingleton<VendorService>();
         services.AddSingleton<QuoteComparisonService>();
         services.AddSingleton<BudgetService>();
+        services.AddSingleton<TaskService>();
 
         services.AddSingleton<ActiveProjectContext>();
         services.AddSingleton<EventsViewModel>();
@@ -73,6 +76,7 @@ public static class AppServices
         services.AddSingleton<GuestsViewModel>();
         services.AddSingleton<VendorsViewModel>();
         services.AddSingleton<BudgetViewModel>();
+        services.AddSingleton<TasksViewModel>();
         services.AddSingleton<BackupViewModel>();
         return services.BuildServiceProvider();
     }

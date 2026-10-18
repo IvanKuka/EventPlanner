@@ -18,4 +18,7 @@ public static class WarningCodes
 
     /// <summary>The budget item is in another currency than the project and is not part of the project totals.</summary>
     public const string ForeignCurrencyNotInTotals = "ForeignCurrencyNotInTotals";
+
+    /// <summary>A task was finished although the task it follows is not done yet.</summary>
+    public const string PredecessorNotDone = "PredecessorNotDone";
 }

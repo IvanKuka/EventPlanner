@@ -41,6 +41,7 @@ Obnova: validovať archiv bez zápisu do aktívneho profilu → vytvoriť nový 
 
 ## Migrácie (Etapa 2)
 
+- `Tasks` (po vydaní 1.0.0) je čisto aditívna: tabuľka Tasks s FK na projekt (CASCADE) a na predchodcu (SET NULL); test profilu verzie 1.0.0 zo zmrazenej schémy `VendorRevisionAndDecisions.sql`.
 - `VendorsAndBudget` je čisto aditívna: tabuľky Vendors, Quotes, BudgetItems, Payments a ich indexy; existujúce tabuľky sa nemenia.
 - Pred migráciou starého profilu `ProfileOpener` vytvorí overenú zálohu `backups/pre-migration-<UTC>-20261017073256_InitialProfile.db`. Rollback: zavrieť appku a obnoviť túto zálohu (prípadne `.epbackup`) do profilu staršej verzie; starší build novšiu schému odmietne (`NewerSchema`) bez zmeny súboru. `Down` migrácie len zahodí nové tabuľky a nepoužíva sa na používateľských dátach.
 - Test: `Integration/Storage/ProfileMigrationTests.cs` nad zmrazenou schémou `EventPlanner.Tests/Fixtures/Schemas/InitialProfile.sql` a vzorovými dátami. Každá ďalšia migrácia pridá vlastnú zmrazenú schému predchádzajúcej verzie.

@@ -12,6 +12,7 @@ using EventPlanner.Desktop.ViewModels.Budget;
 using EventPlanner.Desktop.ViewModels.Events;
 using EventPlanner.Desktop.ViewModels.Guests;
 using EventPlanner.Desktop.ViewModels.Overview;
+using EventPlanner.Desktop.ViewModels.Tasks;
 using EventPlanner.Desktop.ViewModels.Vendors;
 using EventPlanner.Infrastructure.Backup;
 using EventPlanner.Infrastructure.Profiles;
@@ -187,6 +188,7 @@ public sealed partial class ShellViewModel : ViewModelBase, IDisposable
             TabPages.Add(_services.GetRequiredService<GuestsViewModel>());
             TabPages.Add(_services.GetRequiredService<VendorsViewModel>());
             TabPages.Add(_services.GetRequiredService<BudgetViewModel>());
+            TabPages.Add(_services.GetRequiredService<TasksViewModel>());
             Pages.Add(ProjectsPage);
             foreach (var tab in TabPages)
             {

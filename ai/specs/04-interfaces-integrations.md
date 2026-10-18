@@ -1,6 +1,6 @@
 # Navrhované kontrakty a rozšírenia
 
-Služby EventProjectService, GuestService, QuoteComparisonService, BudgetService, TaskScheduleService, SeatingService a EventExportService; transakcie podľa konkrétnych príkazov. Implementované: EventProjectService, GuestService (Etapa 1), VendorService (CRUD dodávateľov a ponúk), QuoteComparisonService (CompareQuotes, SelectQuote) a BudgetService (BudgetTotals ako `GetOverviewAsync`, RecordPayment, PostPayment, CancelPayment) v Etape 2.
+Služby EventProjectService, GuestService, QuoteComparisonService, BudgetService, TaskScheduleService, SeatingService a EventExportService; transakcie podľa konkrétnych príkazov. Implementované: EventProjectService, GuestService (Etapa 1), VendorService (CRUD dodávateľov a ponúk), QuoteComparisonService (CompareQuotes, SelectQuote) a BudgetService (BudgetTotals ako `GetOverviewAsync`, RecordPayment, PostPayment, CancelPayment) v Etape 2; TaskService (časť plánovaného TaskScheduleService: `ListAsync` = UpcomingTasks s termínmi podľa časovej zóny projektu, Create/Update/SetState ako CompleteTask, Delete) po vydaní 1.0.0.
 
 Commands: UpdateGuest(id,expectedRevision,...), SetGroupRsvp(groupId,explicitGuestChanges), SelectQuote(id,budgetImpactPolicy), RecordPayment(itemId,operationId,...), MoveGuestToTable(guestId,tableId,expectedRevision), CompleteTask(id,...), PreviewExport(eventId,profile,fields), ExportApprovedPreview(previewHash,target), ImportProjectAsCopy(path).
 

@@ -8,7 +8,7 @@ Každý riadok je akceptovateľný výsledok, nie iba zoznam technických úloh.
 | E02 | Hostia/RSVP | E-A01, E-A02 | Guests | Skupinové výnimky a privátne polia – **Verified** E-A01 (unit + UI headless); E-A02 čaká na Seating |
 | E03 | Ponuky | E-A05 | Vendors | Neznáma cena sa nepovažuje za nulu – **Verified** E-A05 (unit + SQLite + UI headless); história rozhodnutia **Verified** (SQLite + UI headless); prílohy Planned (Etapa 5) |
 | E04 | Rozpočet a platby | E-A04, E-A05 | Budget | Idempotencia a refund pravidlá – **Verified** E-A04, E-A05 (unit + SQLite + UI headless); E-A09 časť 1000 platieb **Verified** (SQLite), zvyšok E-A09 Planned |
-| E05 | Úlohy/harmonogram | E-A06 | Tasks, Timeline | Zákaz cyklov, DST validácia |
+| E05 | Úlohy/harmonogram | E-A06 | Tasks, Timeline | Zákaz cyklov, DST validácia – **Verified** úlohy a zákaz cyklov (unit + SQLite + UI headless); harmonogram a DST Planned |
 | E06 | Stoly a kapacity | E-A02, E-A03 | Seating | Transakčná kapacita |
 | E07 | Odovzdanie/export | E-A07, E-A08, E-A09, E-A10 | Exports | Allowlist súkromia a bezpečné HTML/CSV |
 

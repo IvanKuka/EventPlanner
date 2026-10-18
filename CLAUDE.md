@@ -2,7 +2,7 @@
 
 ## Stav repozitára
 
-Etapa 1 (Events, Guests, úložisko, záloha/obnova, desktop shell, packaging) a Etapa 2 (Vendors, Budget) sú implementované; stav modulov je v STRUCTURE.md a overené entry points v ai/knowledge. Ostatné moduly a kontrakty v dokumentoch sú plánované. Pred implementáciou over skutočný stav; netvrď, že kontrakt alebo trieda existuje len preto, že je v návrhu.
+Etapa 1 (Events, Guests, úložisko, záloha/obnova, desktop shell, packaging) , Etapa 2 (Vendors, Budget) a úlohy z Etapy 3 (Tasks) sú implementované; stav modulov je v STRUCTURE.md a overené entry points v ai/knowledge. Ostatné moduly a kontrakty v dokumentoch sú plánované. Pred implementáciou over skutočný stav; netvrď, že kontrakt alebo trieda existuje len preto, že je v návrhu.
 
 ## Čítanie a organizácia
 

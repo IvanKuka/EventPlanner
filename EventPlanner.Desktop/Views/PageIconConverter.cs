@@ -6,6 +6,7 @@ using EventPlanner.Desktop.ViewModels.Budget;
 using EventPlanner.Desktop.ViewModels.Events;
 using EventPlanner.Desktop.ViewModels.Guests;
 using EventPlanner.Desktop.ViewModels.Overview;
+using EventPlanner.Desktop.ViewModels.Tasks;
 using EventPlanner.Desktop.ViewModels.Vendors;
 
 namespace EventPlanner.Desktop.Views;
@@ -27,6 +28,7 @@ public sealed class PageIconConverter : IValueConverter
             GuestsViewModel => "Icon.Guests",
             VendorsViewModel => "Icon.Vendors",
             BudgetViewModel => "Icon.Budget",
+            TasksViewModel => "Icon.Tasks",
             BackupViewModel => "Icon.Backup",
             _ => null,
         };

@@ -1,6 +1,7 @@
 using EventPlanner.Core.Models.Budget;
 using EventPlanner.Core.Models.Events;
 using EventPlanner.Core.Models.Guests;
+using EventPlanner.Core.Models.Tasks;
 using EventPlanner.Core.Models.Vendors;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +28,8 @@ public sealed class EventPlannerDbContext(DbContextOptions<EventPlannerDbContext
     public DbSet<BudgetItem> BudgetItems => Set<BudgetItem>();
 
     public DbSet<Payment> Payments => Set<Payment>();
+
+    public DbSet<EventTask> Tasks => Set<EventTask>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) =>
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(EventPlannerDbContext).Assembly);

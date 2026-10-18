@@ -8,7 +8,7 @@ Forma: samostatný desktop pre Windows x64, macOS Apple Silicon a Intel. Bez dat
 
 Pripraviť svadbu, turnaj alebo oslavu od hostí a ponúk po harmonogram a odovzdanie pokynov.
 
-Pôvodný výber: nápad 10. Stav: **Etapa 1 a 2 implementované** – projekty podujatí, hostia/skupiny/RSVP, počty podľa častí programu, lokálny SQLite profil, záloha a obnova, desktop pre Windows a macOS; dodávatelia s porovnaním ponúk, rozpočet (plán / dohodnuté / uhradené) a platby so zálohami, refundmi a preplatkami. Ďalšie etapy pozri v [roadmape](ai/specs/07-roadmap-decisions.md).
+Pôvodný výber: nápad 10. Stav: **Etapa 1 a 2 implementované, z Etapy 3 úlohy** – zoznam úloh s termínmi a závislosťami, projekty podujatí, hostia/skupiny/RSVP, počty podľa častí programu, lokálny SQLite profil, záloha a obnova, desktop pre Windows a macOS; dodávatelia s porovnaním ponúk, rozpočet (plán / dohodnuté / uhradené) a platby so zálohami, refundmi a preplatkami. Ďalšie etapy pozri v [roadmape](ai/specs/07-roadmap-decisions.md).
 
 ## Vývoj
 

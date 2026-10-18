@@ -4,6 +4,7 @@ using Avalonia.Threading;
 using EventPlanner.Contracts.Budget;
 using EventPlanner.Contracts.Events;
 using EventPlanner.Contracts.Guests;
+using EventPlanner.Contracts.Tasks;
 using EventPlanner.Contracts.Vendors;
 using EventPlanner.Desktop.Composition;
 using EventPlanner.Desktop.Localization;
@@ -13,6 +14,7 @@ using EventPlanner.Desktop.ViewModels.Events;
 using EventPlanner.Desktop.ViewModels.Guests;
 using EventPlanner.Desktop.ViewModels.Overview;
 using EventPlanner.Desktop.ViewModels.Shell;
+using EventPlanner.Desktop.ViewModels.Tasks;
 using EventPlanner.Desktop.ViewModels.Vendors;
 using EventPlanner.Desktop.Views;
 using EventPlanner.Infrastructure.Profiles;
@@ -239,6 +241,65 @@ public sealed class ShellFlowTests
             budget.Items.Single().BalanceText);
         Assert.True(budget.ProjectTotals!.HasOverpaid);
         Capture(window, "07-budget");
+
+        window.Close();
+        TryDelete(root);
+    }
+
+    [AvaloniaFact]
+    public async Task Organizer_keeps_a_to_do_list_with_deadlines_and_sees_it_on_the_overview()
+    {
+        var root = TestProfile.NewRoot();
+        var window = new MainWindow { Width = 1280, Height = 800 };
+        using var shell = new ShellViewModel(AppOptions.ForTests(root), NullLoggerFactory.Instance, new FakePlatformServices());
+        window.DataContext = shell;
+        window.Show();
+        Assert.True(await shell.InitializeAsync(CancellationToken.None));
+
+        var projects = shell.ProjectsPage!;
+        projects.Name = "Svadba";
+        projects.StartDate = new DateTime(2027, 6, 12);
+        projects.EndDate = new DateTime(2027, 6, 12);
+        projects.TimeZoneId = "Europe/Bratislava";
+        await projects.SaveCommand.ExecuteAsync(null);
+
+        var tasks = shell.TabPages.OfType<TasksViewModel>().Single();
+        Assert.Same(tasks, shell.TabPages[^1]); // the tab right after Budget
+        shell.SelectedTab = tasks;
+        await tasks.ActivateAsync(CancellationToken.None);
+
+        tasks.NewTaskCommand.Execute(null);
+        tasks.EditTitle = "Rezervovať sálu";
+        tasks.EditOwner = "Anna";
+        tasks.EditDue = new DateTime(2020, 1, 1); // already past: overdue
+        tasks.EditPriority = tasks.PriorityOptions.Single(o => o.Value == TaskPriority.High);
+        await tasks.SaveTaskCommand.ExecuteAsync(null);
+        Assert.Null(tasks.ErrorMessage);
+
+        tasks.NewTaskCommand.Execute(null);
+        tasks.EditTitle = "Poslať pozvánky";
+        tasks.EditNotes = "chýbajú adresy rodiny";
+        tasks.EditPredecessor = tasks.PredecessorOptions.Single(o => o.Label == "Rezervovať sálu");
+        await tasks.SaveTaskCommand.ExecuteAsync(null);
+        Assert.Null(tasks.ErrorMessage);
+
+        Assert.Equal(["Rezervovať sálu", "Poslať pozvánky"], tasks.Tasks.Select(t => t.Title));
+        Assert.True(tasks.Tasks[0].IsOverdue);
+        Assert.NotNull(tasks.Tasks[1].WaitingText);
+        Capture(window, "08-tasks");
+
+        // Finishing the follower first works but warns; hidden once "show done" is off.
+        tasks.SelectedTask = tasks.Tasks.Single(t => t.Title == "Poslať pozvánky");
+        await tasks.MarkDoneCommand.ExecuteAsync(null);
+        Assert.NotNull(tasks.WarningMessage);
+        tasks.ShowDone = false;
+        Assert.Equal(["Rezervovať sálu"], tasks.Tasks.Select(t => t.Title));
+
+        var overview = shell.TabPages.OfType<OverviewViewModel>().Single();
+        shell.SelectedTab = overview;
+        await overview.ActivateAsync(CancellationToken.None);
+        Assert.Equal("Rezervovať sálu", Assert.Single(overview.UpcomingTasks).Title);
+        Assert.Contains(overview.Issues, i => i.Contains(Strings.Overview_OverdueTasks.Split(':')[0], StringComparison.Ordinal));
 
         window.Close();
         TryDelete(root);

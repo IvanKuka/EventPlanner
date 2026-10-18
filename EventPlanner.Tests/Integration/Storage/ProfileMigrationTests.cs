@@ -2,10 +2,12 @@ using System.IO.Compression;
 using System.Text;
 using System.Text.Json.Nodes;
 using EventPlanner.Contracts.Budget;
+using EventPlanner.Contracts.Tasks;
 using EventPlanner.Contracts.Vendors;
 using EventPlanner.Core.Services.Budget;
 using EventPlanner.Core.Services.Events;
 using EventPlanner.Core.Services.Guests;
+using EventPlanner.Core.Services.Tasks;
 using EventPlanner.Core.Services.Vendors;
 using EventPlanner.Infrastructure.Backup;
 using EventPlanner.Infrastructure.Data;
@@ -24,11 +26,16 @@ public sealed class ProfileMigrationTests : IDisposable
 {
     private const string InitialProfileMigration = "20261017073256_InitialProfile";
     private const string VendorsAndBudgetMigration = "20261017082808_VendorsAndBudget";
+    private const string VendorRevisionAndDecisionsMigration = "20261017090216_VendorRevisionAndDecisions";
     private static readonly Guid SeedEventId = Guid.Parse("0192a000-0000-7000-8000-000000000001");
     private static readonly Guid SeedVendorId = Guid.Parse("0192a000-0000-7000-8000-000000000010");
     private static readonly string[] InitialProfileScripts = ["InitialProfile.sql", "InitialProfile.seed.sql"];
     private static readonly string[] VendorsAndBudgetScripts =
         ["VendorsAndBudget.sql", "InitialProfile.seed.sql", "VendorsAndBudget.seed.sql"];
+
+    // The 1.0.0 release schema; its Vendors.Revision column fills itself with the default 1.
+    private static readonly string[] Release100Scripts =
+        ["VendorRevisionAndDecisions.sql", "InitialProfile.seed.sql", "VendorsAndBudget.seed.sql"];
 
     private readonly DataRoot _root = TestProfile.NewRoot();
 
@@ -103,6 +110,27 @@ public sealed class ProfileMigrationTests : IDisposable
         // Migrated vendors take part in optimistic concurrency like new ones.
         var update = new UpdateVendor(vendor.Id, vendor.Revision, vendor.Category, "Nová výzdoba", vendor.Contact, vendor.Notes);
         Assert.Equal(2, (await vendors.UpdateVendorAsync(update, Ct)).Value.Revision);
+    }
+
+    [Fact]
+    public async Task Release_1_0_0_profile_migrates_and_gets_an_empty_task_list()
+    {
+        await CreateProfileAsync(Release100Scripts);
+
+        var result = await TestProfile.Opener().OpenAsync(DataRoot.DefaultProfileName, ProfileDir, Ct);
+
+        Assert.Equal(ProfileOpenStatus.Ready, result.Status);
+        using var profile = result.Profile!;
+        Assert.Equal(SqliteMaintenance.KnownMigrations[^1], profile.SchemaVersion);
+        Assert.Contains(VendorRevisionAndDecisionsMigration, Path.GetFileName(result.PreMigrationBackupPath), StringComparison.Ordinal);
+
+        var sessions = new DataSessionFactory(profile.Database);
+        var vendor = Assert.Single(await new VendorService(sessions, TimeProvider.System).ListVendorsAsync(SeedEventId, Ct));
+        Assert.Equal(1L, vendor.Revision);
+        var tasks = new TaskService(sessions, TimeProvider.System, NullLogger<TaskService>.Instance);
+        Assert.Empty((await tasks.ListAsync(SeedEventId, Ct)).Value.Tasks);
+        var created = await tasks.CreateAsync(new CreateTask(SeedEventId, new TaskInput("Objednať tortu", null, null, TaskPriority.Normal, null, null)), Ct);
+        Assert.True(created.IsSuccess, created.Error?.Detail);
     }
 
     [Fact]

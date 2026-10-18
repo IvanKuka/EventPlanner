@@ -1,6 +1,7 @@
 using EventPlanner.Core.Models.Budget;
 using EventPlanner.Core.Models.Events;
 using EventPlanner.Core.Models.Guests;
+using EventPlanner.Core.Models.Tasks;
 using EventPlanner.Core.Models.Vendors;
 
 namespace EventPlanner.Core.Ports;
@@ -20,6 +21,8 @@ public interface IDataSession : IAsyncDisposable
 
     IBudgetStore Budget { get; }
 
+    ITaskStore Tasks { get; }
+
     Task<SaveOutcome> SaveChangesAsync(CancellationToken cancellationToken);
 }
 
@@ -34,7 +37,7 @@ public enum SaveOutcome
 
     /// <summary>
     /// A revision changed between load and commit, or a concurrent commit took a unique key
-    /// (e.g. a payment operationId); nothing was written.
+    /// (e.g. a payment operationId), or a referenced record was deleted meanwhile; nothing was written.
     /// </summary>
     Conflict,
 }
@@ -121,4 +124,17 @@ public interface IBudgetStore
     void AddItem(BudgetItem item);
 
     void RemoveItem(BudgetItem item);
+}
+
+public interface ITaskStore
+{
+    /// <summary>Tasks of the event, untracked.</summary>
+    Task<IReadOnlyList<EventTask>> ListAsync(Guid eventId, CancellationToken cancellationToken);
+
+    Task<EventTask?> FindAsync(Guid taskId, CancellationToken cancellationToken);
+
+    void Add(EventTask task);
+
+    /// <summary>Removes the task; tasks that followed it lose only the dependency (SET NULL).</summary>
+    void Remove(EventTask task);
 }

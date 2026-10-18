@@ -33,6 +33,7 @@ public static class ErrorText
         ValidationRules.InvalidTransition => Strings.Validation_InvalidTransition,
         ValidationRules.ConfirmationRequired => Strings.Validation_ConfirmationRequired,
         ValidationRules.ConfirmationMismatch => Strings.Validation_ConfirmationMismatch,
+        ValidationRules.DependencyCycle => Strings.Validation_DependencyCycle,
         ValidationRules.UnknownReference => Strings.Validation_UnknownReference,
         ValidationRules.NotInGroup => Strings.Validation_NotInGroup,
         ValidationRules.AmountOutOfRange => Strings.Validation_AmountOutOfRange,
@@ -55,6 +56,7 @@ public static class ErrorText
         WarningCodes.QuoteTotalIncomplete => Strings.Warning_QuoteTotalIncomplete,
         WarningCodes.LinkedBudgetNotUpdated => Strings.Warning_LinkedBudgetNotUpdated,
         WarningCodes.ForeignCurrencyNotInTotals => Strings.Warning_ForeignCurrencyNotInTotals,
+        WarningCodes.PredecessorNotDone => Strings.Warning_PredecessorNotDone,
         _ => warning.Code,
     };
 }

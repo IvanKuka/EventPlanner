@@ -19,6 +19,8 @@ internal sealed class DataSession(EventPlannerDbContext db) : IDataSession
 
     public IBudgetStore Budget { get; } = new BudgetStore(db);
 
+    public ITaskStore Tasks { get; } = new TaskStore(db);
+
     public async Task<SaveOutcome> SaveChangesAsync(CancellationToken cancellationToken)
     {
         try

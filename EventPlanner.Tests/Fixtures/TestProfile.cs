@@ -1,6 +1,7 @@
 using EventPlanner.Core.Services.Budget;
 using EventPlanner.Core.Services.Events;
 using EventPlanner.Core.Services.Guests;
+using EventPlanner.Core.Services.Tasks;
 using EventPlanner.Core.Services.Vendors;
 using EventPlanner.Infrastructure.Data;
 using EventPlanner.Infrastructure.Profiles;
@@ -24,6 +25,7 @@ public sealed class TestProfile : IAsyncDisposable
         Vendors = new VendorService(Sessions, TimeProvider.System);
         Quotes = new QuoteComparisonService(Sessions, TimeProvider.System, NullLogger<QuoteComparisonService>.Instance);
         Budget = new BudgetService(Sessions, NullLogger<BudgetService>.Instance);
+        Tasks = new TaskService(Sessions, TimeProvider.System, NullLogger<TaskService>.Instance);
     }
 
     public DataRoot Root { get; }
@@ -41,6 +43,8 @@ public sealed class TestProfile : IAsyncDisposable
     public QuoteComparisonService Quotes { get; private set; }
 
     public BudgetService Budget { get; private set; }
+
+    public TaskService Tasks { get; private set; }
 
     public static ProfileOpener Opener() => new(TimeProvider.System, NullLogger<ProfileOpener>.Instance);
 
@@ -68,6 +72,7 @@ public sealed class TestProfile : IAsyncDisposable
         Vendors = new VendorService(Sessions, TimeProvider.System);
         Quotes = new QuoteComparisonService(Sessions, TimeProvider.System, NullLogger<QuoteComparisonService>.Instance);
         Budget = new BudgetService(Sessions, NullLogger<BudgetService>.Instance);
+        Tasks = new TaskService(Sessions, TimeProvider.System, NullLogger<TaskService>.Instance);
     }
 
     public ValueTask DisposeAsync()

@@ -4,10 +4,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using EventPlanner.Contracts.Budget;
 using EventPlanner.Contracts.Guests;
 using EventPlanner.Contracts.Results;
+using EventPlanner.Contracts.Tasks;
 using EventPlanner.Core.Services.Budget;
 using EventPlanner.Core.Services.Guests;
+using EventPlanner.Core.Services.Tasks;
 using EventPlanner.Desktop.Localization;
 using EventPlanner.Desktop.ViewModels.Shell;
+using EventPlanner.Desktop.ViewModels.Tasks;
 
 namespace EventPlanner.Desktop.ViewModels.Overview;
 
@@ -15,13 +18,17 @@ namespace EventPlanner.Desktop.ViewModels.Overview;
 /// Event dashboard. Only figures that the app actually knows are shown; unknown answers and
 /// unassigned guests are listed as open issues instead of being hidden as zero.
 /// </summary>
-public sealed partial class OverviewViewModel(GuestService guests, BudgetService budget, ActiveProjectContext active) : ViewModelBase, IPage
+public sealed partial class OverviewViewModel(GuestService guests, BudgetService budget, TaskService tasks, ActiveProjectContext active)
+    : ViewModelBase, IPage
 {
     public string Title => Strings.Nav_Overview;
 
     public ObservableCollection<ProgramPartCountsDto> PartCounts { get; } = [];
 
     public ObservableCollection<string> Issues { get; } = [];
+
+    /// <summary>The next open tasks by deadline (overdue ones first).</summary>
+    public ObservableCollection<TaskRow> UpcomingTasks { get; } = [];
 
     [ObservableProperty]
     public partial bool HasProject { get; set; }
@@ -53,6 +60,7 @@ public sealed partial class OverviewViewModel(GuestService guests, BudgetService
         HasProject = project is not null;
         PartCounts.Clear();
         Issues.Clear();
+        UpcomingTasks.Clear();
         if (project is null)
         {
             return;
@@ -67,7 +75,8 @@ public sealed partial class OverviewViewModel(GuestService guests, BudgetService
 
         var countsTask = guests.GetCountsAsync(project.Id, cancellationToken);
         var budgetTask = budget.GetOverviewAsync(project.Id, cancellationToken);
-        await Task.WhenAll(countsTask, budgetTask);
+        var tasksTask = tasks.ListAsync(project.Id, cancellationToken);
+        await Task.WhenAll(countsTask, budgetTask, tasksTask);
         var result = countsTask.Result;
         cancellationToken.ThrowIfCancellationRequested();
         if (active.Project?.Id != project.Id)
@@ -85,6 +94,7 @@ public sealed partial class OverviewViewModel(GuestService guests, BudgetService
         var counts = result.Value;
         TotalGuestsText = string.Format(CultureInfo.CurrentCulture, Strings.Overview_TotalGuests, counts.TotalGuests);
         ShowBudget(budgetTask.Result);
+        ShowTasks(tasksTask.Result);
         foreach (var part in counts.Parts)
         {
             PartCounts.Add(part);
@@ -103,6 +113,27 @@ public sealed partial class OverviewViewModel(GuestService guests, BudgetService
         if (counts.GuestsAwaitingAnswer > 0)
         {
             Issues.Add(string.Format(CultureInfo.CurrentCulture, Strings.Overview_IssuePendingAnswers, counts.GuestsAwaitingAnswer));
+        }
+    }
+
+    private const int UpcomingTaskCount = 5;
+
+    /// <summary>The first open tasks of the list (it is already ordered by deadline); overdue ones are an issue.</summary>
+    private void ShowTasks(Result<TaskListDto> result)
+    {
+        if (!result.IsSuccess)
+        {
+            return;
+        }
+
+        foreach (var task in result.Value.Tasks.Where(t => t.State != TaskState.Done).Take(UpcomingTaskCount))
+        {
+            UpcomingTasks.Add(new TaskRow(task, null));
+        }
+
+        if (result.Value.OverdueCount > 0)
+        {
+            Issues.Add(string.Format(CultureInfo.CurrentCulture, Strings.Overview_OverdueTasks, result.Value.OverdueCount));
         }
     }
 

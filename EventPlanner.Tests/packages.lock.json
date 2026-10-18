@@ -476,9 +476,9 @@
           "Avalonia.Fonts.Inter": "[12.1.4, )",
           "Avalonia.Themes.Fluent": "[12.1.4, )",
           "CommunityToolkit.Mvvm": "[8.4.2, )",
-          "EventPlanner.Contracts": "[1.0.0, )",
-          "EventPlanner.Core": "[1.0.0, )",
-          "EventPlanner.Infrastructure": "[1.0.0, )",
+          "EventPlanner.Contracts": "[1.1.0, )",
+          "EventPlanner.Core": "[1.1.0, )",
+          "EventPlanner.Infrastructure": "[1.1.0, )",
           "Microsoft.Extensions.DependencyInjection": "[10.0.13, )",
           "Microsoft.Extensions.Logging": "[10.0.13, )",
           "Serilog.Extensions.Logging": "[10.0.0, )",
@@ -491,14 +491,14 @@
       "eventplanner.core": {
         "type": "Project",
         "dependencies": {
-          "EventPlanner.Contracts": "[1.0.0, )",
+          "EventPlanner.Contracts": "[1.1.0, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )"
         }
       },
       "eventplanner.infrastructure": {
         "type": "Project",
         "dependencies": {
-          "EventPlanner.Core": "[1.0.0, )",
+          "EventPlanner.Core": "[1.1.0, )",
           "Microsoft.EntityFrameworkCore.Sqlite": "[10.0.13, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )"
         }

@@ -17,6 +17,7 @@ public static class ValidationRules
     public const string InvalidTransition = "InvalidTransition";
     public const string ConfirmationRequired = "ConfirmationRequired";
     public const string ConfirmationMismatch = "ConfirmationMismatch";
+    public const string DependencyCycle = "DependencyCycle";
     public const string UnknownReference = "UnknownReference";
     public const string NotInGroup = "NotInGroup";
     public const string InvalidValue = "InvalidValue";

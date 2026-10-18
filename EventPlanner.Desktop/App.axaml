@@ -5,6 +5,7 @@
              xmlns:guests="using:EventPlanner.Desktop.ViewModels.Guests"
              xmlns:vendors="using:EventPlanner.Desktop.ViewModels.Vendors"
              xmlns:budget="using:EventPlanner.Desktop.ViewModels.Budget"
+             xmlns:tasks="using:EventPlanner.Desktop.ViewModels.Tasks"
              xmlns:backup="using:EventPlanner.Desktop.ViewModels.Backup"
              xmlns:views="using:EventPlanner.Desktop.Views"
              x:Class="EventPlanner.Desktop.App"
@@ -23,6 +24,9 @@
     </DataTemplate>
     <DataTemplate DataType="vendors:VendorsViewModel">
       <views:VendorsView />
+    </DataTemplate>
+    <DataTemplate DataType="tasks:TasksViewModel">
+      <views:TasksView />
     </DataTemplate>
     <DataTemplate DataType="budget:BudgetViewModel">
       <views:BudgetView />

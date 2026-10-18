@@ -29,6 +29,8 @@ Hosť má stabilné ID nezávislé od mena. Rovnaké meno je varovanie, nie blok
 
 Časy sú lokálne pre projektovú časovú zónu, aj pri práci na počítači v inej zóne. Pri DST nejednoznačnosti vyžadovať výber offsetu; interval konca musí nasledovať začiatok. Podujatie môže prejsť cez polnoc. Kolízia úloh tej istej osoby je varovanie, nie globálny zákaz paralelných aktivít. Závislosti úloh nesmú vytvoriť cyklus.
 
+Implementované úlohy (`TaskService`, `TaskPlanning`): zoznam úloh projektu s názvom, zodpovednou osobou (voľný text), termínom (dátum v časovej zóne projektu), prioritou, stavom Treba urobiť / Rozpracované / Hotové, poznámkou a voliteľným predchodcom. Predchodca musí byť iná úloha toho istého projektu a nesmie uzavrieť cyklus (`DependencyCycle`, `UnknownReference`); dokončenie úlohy pred predchodcom je povolené s varovaním `PredecessorNotDone`; zmazanie predchodcu ponechá nadväzujúce úlohy bez väzby. „Po termíne“ = nedokončená úloha s termínom pred dnešným dňom projektu. Poradie: otvorené podľa termínu (bez termínu na koniec), potom priority a názvu; hotové na konci. Prehľad ukazuje päť najbližších otvorených úloh a počet úloh po termíne ako otvorený bod. Harmonogram dňa (TimelineEntry, DST, cez polnoc) a kolízie úloh jednej osoby sú plánované.
+
 ## Výstupy
 
 Exportné profily: organizátor plný plán, dodávateľ zvolený harmonogram, catering menné alebo súhrnné počty s výslovne vybranými požiadavkami, hostia verejný program. Výber polí je allowlist, súkromné poznámky sa predvolene nezahrnú. CSV chráni pred formula injection; tlačový výstup má opakovanú hlavičku a kontrolu stránkovania. PDF renderer vybrať až po license spike; prvá verzia môže mať CSV + bezpečný statický HTML na tlač, PDF je samostatná overená akceptačná etapa.

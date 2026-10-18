@@ -385,4 +385,44 @@
   <data name="Overview_Budget" xml:space="preserve"><value>Rozpočet: plán {0} · dohodnuté {1} · uhradené {2} · zostáva {3}</value></data>
   <data name="Overview_IssueOverpaid" xml:space="preserve"><value>Preplatok v rozpočte: {0}</value></data>
   <data name="Overview_IssueOtherCurrency" xml:space="preserve"><value>Rozpočtové položky v inej mene ({0}× {1}) nie sú v spoločnom súčte.</value></data>
+  <data name="Nav_Tasks" xml:space="preserve"><value>Úlohy</value></data>
+  <data name="Tasks_Due" xml:space="preserve"><value>do {0}</value></data>
+  <data name="Tasks_NoDeadline" xml:space="preserve"><value>bez termínu</value></data>
+  <data name="Tasks_Owner" xml:space="preserve"><value>rieši: {0}</value></data>
+  <data name="Tasks_WaitingFor" xml:space="preserve"><value>čaká na: {0}</value></data>
+  <data name="Tasks_NoPredecessor" xml:space="preserve"><value>Nenadväzuje na inú úlohu</value></data>
+  <data name="Tasks_Summary" xml:space="preserve"><value>Otvorené: {0} · po termíne: {1}</value></data>
+  <data name="Tasks_StateChanged" xml:space="preserve"><value>Stav úlohy: {0}.</value></data>
+  <data name="Tasks_Overdue" xml:space="preserve"><value>Po termíne</value></data>
+  <data name="Tasks_HighPriority" xml:space="preserve"><value>Dôležité</value></data>
+  <data name="Tasks_Empty" xml:space="preserve"><value>Zatiaľ žiadne úlohy. Pridajte, čo treba pred podujatím vybaviť.</value></data>
+  <data name="Tasks_SelectHint" xml:space="preserve"><value>Vyberte úlohu alebo pridajte novú.</value></data>
+  <data name="Tasks_Detail" xml:space="preserve"><value>Úloha</value></data>
+  <data name="Tasks_Title" xml:space="preserve"><value>Čo treba urobiť</value></data>
+  <data name="Tasks_OwnerLabel" xml:space="preserve"><value>Kto to rieši</value></data>
+  <data name="Tasks_DueLabel" xml:space="preserve"><value>Dokedy</value></data>
+  <data name="Tasks_DeadlineHint" xml:space="preserve"><value>Termín je dátum v časovej zóne projektu. Prázdny = bez termínu.</value></data>
+  <data name="Tasks_Priority" xml:space="preserve"><value>Priorita</value></data>
+  <data name="Tasks_Predecessor" xml:space="preserve"><value>Nadväzuje na</value></data>
+  <data name="Tasks_Notes" xml:space="preserve"><value>Poznámky (čo ešte chýba)</value></data>
+  <data name="Tasks_ShowDone" xml:space="preserve"><value>Zobraziť hotové</value></data>
+  <data name="Tasks_ConfirmDelete" xml:space="preserve"><value>Zmazať úlohu? Úlohy, ktoré na ňu nadväzujú, zostanú, len stratia väzbu.</value></data>
+  <data name="Tasks_New" xml:space="preserve"><value>Nová úloha</value></data>
+  <data name="Tasks_MarkInProgress" xml:space="preserve"><value>Rozpracovať</value></data>
+  <data name="Tasks_MarkDone" xml:space="preserve"><value>Hotovo</value></data>
+  <data name="Tasks_Reopen" xml:space="preserve"><value>Znovu otvoriť</value></data>
+  <data name="Ribbon_Tasks" xml:space="preserve"><value>Úlohy</value></data>
+  <data name="Ribbon_TaskState" xml:space="preserve"><value>Stav</value></data>
+  <data name="Ribbon_DeleteTask" xml:space="preserve"><value>Zmazať úlohu</value></data>
+  <data name="TaskState_Todo" xml:space="preserve"><value>Treba urobiť</value></data>
+  <data name="TaskState_InProgress" xml:space="preserve"><value>Rozpracované</value></data>
+  <data name="TaskState_Done" xml:space="preserve"><value>Hotové</value></data>
+  <data name="TaskPriority_Low" xml:space="preserve"><value>Nízka</value></data>
+  <data name="TaskPriority_Normal" xml:space="preserve"><value>Bežná</value></data>
+  <data name="TaskPriority_High" xml:space="preserve"><value>Vysoká</value></data>
+  <data name="Validation_DependencyCycle" xml:space="preserve"><value>Takto by úloha nadväzovala sama na seba (kruhová závislosť).</value></data>
+  <data name="Warning_PredecessorNotDone" xml:space="preserve"><value>Úloha je hotová, hoci úloha, na ktorú nadväzuje, ešte nie je.</value></data>
+  <data name="Overview_TasksTitle" xml:space="preserve"><value>Najbližšie úlohy</value></data>
+  <data name="Overview_NoTasks" xml:space="preserve"><value>Žiadne otvorené úlohy.</value></data>
+  <data name="Overview_OverdueTasks" xml:space="preserve"><value>Úlohy po termíne: {0}</value></data>
 </root>

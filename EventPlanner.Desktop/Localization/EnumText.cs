@@ -1,6 +1,7 @@
 using EventPlanner.Contracts.Budget;
 using EventPlanner.Contracts.Events;
 using EventPlanner.Contracts.Guests;
+using EventPlanner.Contracts.Tasks;
 using EventPlanner.Contracts.Vendors;
 using EventPlanner.Desktop.ViewModels;
 
@@ -83,6 +84,20 @@ public static class EnumText
         PaymentKind.Deposit => Strings.PaymentKind_Deposit,
         PaymentKind.Refund => Strings.PaymentKind_Refund,
         _ => Strings.PaymentKind_Balance,
+    };
+
+    public static string For(TaskState state) => state switch
+    {
+        TaskState.InProgress => Strings.TaskState_InProgress,
+        TaskState.Done => Strings.TaskState_Done,
+        _ => Strings.TaskState_Todo,
+    };
+
+    public static string For(TaskPriority priority) => priority switch
+    {
+        TaskPriority.Low => Strings.TaskPriority_Low,
+        TaskPriority.High => Strings.TaskPriority_High,
+        _ => Strings.TaskPriority_Normal,
     };
 
     public static string For(PaymentStatus status) => status switch
