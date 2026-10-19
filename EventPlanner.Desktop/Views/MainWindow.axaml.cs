@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 
 namespace EventPlanner.Desktop.Views;
 
@@ -20,5 +21,8 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private void OnFlyoutCommand(object? sender, RoutedEventArgs e) => ProjectSwitcher.Flyout?.Hide();
+    // Click is raised before the button runs its command. Closing the menu right away detaches the
+    // button, its command binding goes away and the click does nothing, so the menu closes afterwards.
+    private void OnFlyoutCommand(object? sender, RoutedEventArgs e) =>
+        Dispatcher.UIThread.Post(() => ProjectSwitcher.Flyout?.Hide());
 }
